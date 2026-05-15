@@ -7,9 +7,6 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 export function Home() {
-  const products = useProductStore((state) => state.products);
-
-
   const storeCategories = useProductStore((state) => state.categories);
 
   return (
