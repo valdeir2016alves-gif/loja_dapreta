@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useProductStore } from '@/store/useProductStore';
-import { ProductCard } from '@/components/product/ProductCard';
+
 
 import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 
 export function Home() {
   const products = useProductStore((state) => state.products);
-  const featuredProducts = products.filter((p) => p.isFeatured).slice(0, 4);
+
 
   const storeCategories = useProductStore((state) => state.categories);
 
@@ -32,7 +32,7 @@ export function Home() {
               Sua beleza <br /> merece brilhar
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Descubra nossa coleção exclusiva de cosméticos premium que realçam o melhor em você. Produtos selecionados para uma rotina de autocuidado completa.
+              Revendedora de produtos Avon, oferecendo cosméticos, perfumes, maquiagens e itens de cuidados pessoais
             </p>
             <div className="flex flex-wrap gap-4">
               <Link to="/catalog">
@@ -70,28 +70,6 @@ export function Home() {
                 <h3 className="font-bold text-primary text-center">{catName}</h3>
               </Link>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Products */}
-      <section className="py-16 bg-background/95">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-primary mb-2">Favoritos da Semana</h2>
-            <p className="text-muted-foreground">Os produtos mais amados pela nossa comunidade.</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          <div className="mt-12 text-center">
-            <Link to="/catalog">
-              <Button variant="outline" className="rounded-full border-primary text-primary hover:bg-primary/10 px-8 h-12">
-                Ver todos os produtos
-              </Button>
-            </Link>
           </div>
         </div>
       </section>

@@ -12,8 +12,7 @@ export function Footer() {
               Sobre a Loja
             </h4>
             <p className="text-sm leading-relaxed text-gray-300">
-              Trabalhamos com produtos de qualidade, oferecendo um<br className="hidden md:block"/>
-              atendimento rápido e de confiança para você.
+              Trabalhamos com produtos de qualidade, oferecendo um atendimento rápido e de confiança para você.
             </p>
           </div>
 
