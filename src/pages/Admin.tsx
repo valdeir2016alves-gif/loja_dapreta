@@ -1,0 +1,289 @@
+import { useState } from 'react';
+import { useProductStore } from '@/store/useProductStore';
+import { type Product, type Category } from '@/types/product';
+import { SEO } from '@/components/SEO';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Plus, Pencil, Trash2, LayoutDashboard, Package } from 'lucide-react';
+
+const CATEGORIES: Category[] = [
+  "Maquiagem",
+  "Skincare",
+  "Perfumes",
+  "Cabelos",
+  "Corpo e Banho",
+  "Kits Promocionais"
+];
+
+export function Admin() {
+  const { products, addProduct, updateProduct, deleteProduct } = useProductStore();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  // Form State
+  const [formData, setFormData] = useState<Omit<Product, 'id'>>({
+    name: '',
+    category: 'Maquiagem',
+    price: 0,
+    image: '',
+    shortDescription: '',
+    fullDescription: '',
+    isFeatured: false,
+  });
+
+  const handleOpenAdd = () => {
+    setEditingProduct(null);
+    setFormData({
+      name: '',
+      category: 'Maquiagem',
+      price: 0,
+      image: '',
+      shortDescription: '',
+      fullDescription: '',
+      isFeatured: false,
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleOpenEdit = (product: Product) => {
+    setEditingProduct(product);
+    setFormData({
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      image: product.image,
+      shortDescription: product.shortDescription,
+      fullDescription: product.fullDescription,
+      isFeatured: product.isFeatured || false,
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingProduct) {
+      updateProduct(editingProduct.id, { ...formData, id: editingProduct.id });
+    } else {
+      const newProduct: Product = {
+        ...formData,
+        id: Math.random().toString(36).substr(2, 9),
+      };
+      addProduct(newProduct);
+    }
+    setIsDialogOpen(false);
+  };
+
+  return (
+    <>
+      <SEO title="Painel Administrativo" />
+      
+      <div className="container mx-auto px-4 py-12">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-4">
+          <div>
+            <h1 className="text-4xl font-bold text-primary flex items-center gap-3">
+              <LayoutDashboard className="h-8 w-8" /> Dashboard Administrativo
+            </h1>
+            <p className="text-muted-foreground mt-1">Gerencie seu catálogo de produtos Bella Glow.</p>
+          </div>
+          
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger
+              render={
+                <Button onClick={handleOpenAdd} className="bg-primary text-white hover:bg-primary/90 rounded-xl h-12 px-6">
+                  <Plus className="mr-2 h-5 w-5" /> Novo Produto
+                </Button>
+              }
+            />
+            <DialogContent className="max-w-2xl bg-white rounded-3xl sm:rounded-3xl">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-primary">
+                  {editingProduct ? 'Editar Produto' : 'Cadastrar Novo Produto'}
+                </DialogTitle>
+              </DialogHeader>
+              
+              <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nome do Produto</Label>
+                  <Input 
+                    id="name" 
+                    required 
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    className="rounded-xl border-primary/20"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="category">Categoria</Label>
+                  <Select 
+                    value={formData.category} 
+                    onValueChange={(val: Category | null) => { if (val) setFormData({...formData, category: val}) }}
+                  >
+                    <SelectTrigger className="rounded-xl border-primary/20">
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CATEGORIES.map(cat => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="price">Preço (R$)</Label>
+                  <Input 
+                    id="price" 
+                    type="number" 
+                    step="0.01" 
+                    required 
+                    value={formData.price}
+                    onChange={(e) => setFormData({...formData, price: parseFloat(e.target.value)})}
+                    className="rounded-xl border-primary/20"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="image">URL da Imagem</Label>
+                  <Input 
+                    id="image" 
+                    required 
+                    placeholder="https://unsplash.com/..."
+                    value={formData.image}
+                    onChange={(e) => setFormData({...formData, image: e.target.value})}
+                    className="rounded-xl border-primary/20"
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="shortDesc">Descrição Curta</Label>
+                  <Input 
+                    id="shortDesc" 
+                    required 
+                    value={formData.shortDescription}
+                    onChange={(e) => setFormData({...formData, shortDescription: e.target.value})}
+                    className="rounded-xl border-primary/20"
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="fullDesc">Descrição Completa</Label>
+                  <Textarea 
+                    id="fullDesc" 
+                    required 
+                    rows={4}
+                    value={formData.fullDescription}
+                    onChange={(e) => setFormData({...formData, fullDescription: e.target.value})}
+                    className="rounded-xl border-primary/20"
+                  />
+                </div>
+
+                <DialogFooter className="md:col-span-2 mt-4">
+                  <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)}>
+                    Cancelar
+                  </Button>
+                  <Button type="submit" className="bg-primary text-white hover:bg-primary/90">
+                    {editingProduct ? 'Salvar Alterações' : 'Cadastrar Produto'}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Stats Summary */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          <div className="bg-white p-6 rounded-3xl border border-primary/10 shadow-sm">
+            <p className="text-muted-foreground text-sm">Total de Produtos</p>
+            <h3 className="text-3xl font-bold text-primary mt-1">{products.length}</h3>
+          </div>
+          <div className="bg-white p-6 rounded-3xl border border-primary/10 shadow-sm">
+            <p className="text-muted-foreground text-sm">Categorias Ativas</p>
+            <h3 className="text-3xl font-bold text-primary mt-1">{new Set(products.map(p => p.category)).size}</h3>
+          </div>
+        </div>
+
+        {/* Products Table */}
+        <div className="bg-white rounded-3xl border border-primary/10 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-secondary/20 border-b border-primary/10">
+                <tr>
+                  <th className="px-6 py-4 font-bold text-primary text-sm">Produto</th>
+                  <th className="px-6 py-4 font-bold text-primary text-sm">Categoria</th>
+                  <th className="px-6 py-4 font-bold text-primary text-sm">Preço</th>
+                  <th className="px-6 py-4 font-bold text-primary text-sm text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-primary/5">
+                {products.map((product) => (
+                  <tr key={product.id} className="hover:bg-primary/5 transition-colors group">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-lg overflow-hidden bg-secondary/30 flex-shrink-0">
+                          <img src={product.image} alt="" className="h-full w-full object-cover" />
+                        </div>
+                        <span className="font-medium text-sm line-clamp-1">{product.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-xs bg-secondary px-2 py-1 rounded-full text-primary font-medium">
+                        {product.category}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm font-bold text-primary">
+                      R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => handleOpenEdit(product)}
+                          className="h-8 w-8 text-muted-foreground hover:text-primary"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => deleteProduct(product.id)}
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {products.length === 0 && (
+            <div className="py-20 text-center">
+              <Package className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+              <p className="text-muted-foreground">Nenhum produto cadastrado.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
