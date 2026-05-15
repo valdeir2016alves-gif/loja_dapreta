@@ -17,12 +17,9 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="text-xl font-bold text-primary flex items-center gap-2 leading-tight">
-          <span className="bg-primary text-white p-2 rounded-xl text-lg">LP</span>
-          <div className="hidden sm:flex flex-col">
-            <span>Loja da</span>
-            <span className="text-2xl text-accent-foreground font-extrabold tracking-wide">Preta</span>
-          </div>
+        <Link to="/" className="text-xl font-bold text-primary flex items-center gap-3">
+          <img src="/loja_dapreta/logo.jpg" alt="Loja da Preta" className="w-10 h-10 rounded-full object-cover shadow-sm" />
+          <span className="hidden sm:inline">Loja da Preta</span>
         </Link>
 
         {/* Desktop Links */}
