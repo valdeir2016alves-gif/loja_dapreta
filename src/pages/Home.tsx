@@ -14,7 +14,7 @@ export function Home() {
       <SEO title="Início - Realce sua beleza" />
       
       {/* Hero Section */}
-      <section className="relative h-[600px] flex items-center overflow-hidden bg-background">
+      <section className="relative h-[600px] flex items-center overflow-hidden bg-secondary/30">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1600&auto=format&fit=crop" 
@@ -46,7 +46,7 @@ export function Home() {
       </section>
 
       {/* Categories */}
-      <section className="py-16">
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-10">
             <h2 className="text-3xl font-bold text-primary">Nossas Categorias</h2>
