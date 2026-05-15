@@ -17,9 +17,12 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="text-2xl font-bold text-primary flex items-center gap-2">
-          <span className="bg-primary text-white p-1 rounded-lg">BG</span>
-          <span className="hidden sm:inline">Bella Glow</span>
+        <Link to="/" className="text-xl font-bold text-primary flex items-center gap-2 leading-tight">
+          <span className="bg-primary text-white p-2 rounded-xl text-lg">LP</span>
+          <div className="hidden sm:flex flex-col">
+            <span>Loja da</span>
+            <span className="text-2xl text-accent-foreground font-extrabold tracking-wide">Preta</span>
+          </div>
         </Link>
 
         {/* Desktop Links */}

@@ -1,4 +1,4 @@
-import { Camera, Globe, MessageCircle, Mail, Phone, MapPin } from 'lucide-react';
+import { Camera, Globe, MessageCircle, Phone, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function Footer() {
@@ -8,17 +8,24 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div className="flex flex-col gap-4">
-            <Link to="/" className="text-2xl font-bold text-primary flex items-center gap-2">
-              <span className="bg-primary text-white p-1 rounded-lg">BG</span>
-              <span>Bella Glow</span>
+            <Link to="/" className="text-xl font-bold text-primary flex items-center gap-2 leading-tight">
+              <span className="bg-primary text-white p-2 rounded-xl text-lg">LP</span>
+              <div className="flex flex-col">
+                <span>Loja da</span>
+                <span className="text-2xl text-accent-foreground font-extrabold tracking-wide">Preta</span>
+              </div>
             </Link>
             <p className="text-muted-foreground text-sm">
-              Realçando sua beleza natural com produtos de alta qualidade e sofisticação desde 2024.
+              Trabalhamos com produtos de qualidade, oferecendo um atendimento rápido e de confiança para você.
             </p>
             <div className="flex gap-4">
-              <Camera className="h-5 w-5 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
+              <a href="https://www.facebook.com/people/Loja-da-Preta/61575780244892/?rdid=dA766IfOt12Zt6cf&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1NHuw1rSzF%2F" target="_blank" rel="noopener noreferrer">
+                <Camera className="h-5 w-5 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
+              </a>
               <Globe className="h-5 w-5 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
-              <MessageCircle className="h-5 w-5 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
+              <a href="https://wa.me/55997214164" target="_blank" rel="noopener noreferrer">
+                <MessageCircle className="h-5 w-5 text-muted-foreground hover:text-primary cursor-pointer transition-colors" />
+              </a>
             </div>
           </div>
 
@@ -49,20 +56,17 @@ export function Footer() {
             <h4 className="font-bold mb-4 text-primary">Contato</h4>
             <ul className="flex flex-col gap-3 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4" /> (11) 99999-9999
+                <Phone className="h-4 w-4" /> (99) 7214-164
               </li>
               <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4" /> contato@bellaglow.com.br
-              </li>
-              <li className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" /> Av. Paulista, 1000 - São Paulo, SP
+                <MapPin className="h-4 w-4" /> São Gabriel - RS
               </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t pt-8 text-center text-xs text-muted-foreground">
-          <p>© 2026 Bella Glow Cosméticos. Todos os direitos reservados. Feito com ✨ para você.</p>
+          <p>© 2026 Loja da Preta. Todos os direitos reservados. Feito com ✨ para você.</p>
         </div>
       </div>
     </footer>

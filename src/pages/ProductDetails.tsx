@@ -23,9 +23,9 @@ export function ProductDetails() {
   }
 
   const whatsappMessage = encodeURIComponent(
-    `Olá Bella Glow! Tenho interesse no produto: ${product.name} (R$ ${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}).`
+    `Olá Loja da Preta! Tenho interesse no produto: ${product.name} (R$ ${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}).`
   );
-  const whatsappUrl = `https://wa.me/5511999999999?text=${whatsappMessage}`;
+  const whatsappUrl = `https://wa.me/55997214164?text=${whatsappMessage}`;
 
   return (
     <>

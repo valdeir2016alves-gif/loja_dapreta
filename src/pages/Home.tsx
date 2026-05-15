@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useProductStore } from '@/store/useProductStore';
 import { ProductCard } from '@/components/product/ProductCard';
-import { Testimonials } from '@/components/home/Testimonials';
+
 import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Sparkles, Heart, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Sparkles, Heart } from 'lucide-react';
 
 export function Home() {
   const products = useProductStore((state) => state.products);
@@ -101,37 +101,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* Benefits */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="flex flex-col items-center text-center">
-              <div className="h-16 w-16 bg-pink-100 rounded-full flex items-center justify-center text-primary mb-4">
-                <ShieldCheck className="h-8 w-8" />
-              </div>
-              <h3 className="font-bold text-xl mb-2 text-primary">Qualidade Garantida</h3>
-              <p className="text-muted-foreground">Todos os nossos produtos são dermatologicamente testados e aprovados.</p>
-            </div>
-            <div className="flex flex-col items-center text-center">
-              <div className="h-16 w-16 bg-pink-100 rounded-full flex items-center justify-center text-primary mb-4">
-                <Sparkles className="h-8 w-8" />
-              </div>
-              <h3 className="font-bold text-xl mb-2 text-primary">Cruelty Free</h3>
-              <p className="text-muted-foreground">Não realizamos testes em animais em nenhuma etapa da nossa produção.</p>
-            </div>
-            <div className="flex flex-col items-center text-center">
-              <div className="h-16 w-16 bg-pink-100 rounded-full flex items-center justify-center text-primary mb-4">
-                <Heart className="h-8 w-8" />
-              </div>
-              <h3 className="font-bold text-xl mb-2 text-primary">Feito com Amor</h3>
-              <p className="text-muted-foreground">Cada pedido é embalado com carinho para garantir a melhor experiência.</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Testimonials */}
-      <Testimonials />
     </>
   );
 }
