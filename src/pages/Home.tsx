@@ -4,18 +4,13 @@ import { ProductCard } from '@/components/product/ProductCard';
 
 import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Sparkles, Heart } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
 export function Home() {
   const products = useProductStore((state) => state.products);
   const featuredProducts = products.filter((p) => p.isFeatured).slice(0, 4);
 
-  const categories = [
-    { name: "Skincare", icon: <Sparkles />, color: "bg-pink-100" },
-    { name: "Maquiagem", icon: <Heart />, color: "bg-rose-100" },
-    { name: "Perfumes", icon: <Sparkles />, color: "bg-fuchsia-100" },
-    { name: "Kits", icon: <Sparkles />, color: "bg-purple-100" },
-  ];
+  const storeCategories = useProductStore((state) => state.categories);
 
   return (
     <>
@@ -63,16 +58,16 @@ export function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {categories.map((cat) => (
+            {storeCategories.slice(0, 4).map((catName) => (
               <Link 
-                key={cat.name} 
-                to={`/catalog?cat=${cat.name === "Kits" ? "Kits Promocionais" : cat.name}`}
+                key={catName} 
+                to={`/catalog?cat=${catName}`}
                 className="group flex flex-col items-center p-8 rounded-3xl bg-secondary/20 hover:bg-primary/10 transition-all duration-300"
               >
                 <div className="mb-4 text-primary group-hover:scale-110 transition-transform duration-300">
-                  {cat.icon}
+                  <Sparkles />
                 </div>
-                <h3 className="font-bold text-primary">{cat.name}</h3>
+                <h3 className="font-bold text-primary text-center">{catName}</h3>
               </Link>
             ))}
           </div>

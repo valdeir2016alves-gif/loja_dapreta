@@ -15,19 +15,12 @@ import {
 import { type Category, type SortOption } from '@/types/product';
 import { Search, FilterX } from 'lucide-react';
 
-const CATEGORIES: (Category | "All")[] = [
-  "All",
-  "Maquiagem",
-  "Skincare",
-  "Perfumes",
-  "Cabelos",
-  "Corpo e Banho",
-  "Kits Promocionais"
-];
 
 export function Catalog() {
   const [searchParams, setSearchParams] = useSearchParams();
   const products = useProductStore((state) => state.products);
+  const storeCategories = useProductStore((state) => state.categories);
+  const CATEGORIES = ["All", ...storeCategories];
   
   const [search, setSearch] = useState("");
   const currentCategory = (searchParams.get("cat") as Category | "All") || "All";

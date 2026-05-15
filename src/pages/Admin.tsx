@@ -25,19 +25,13 @@ import { Plus, Pencil, Trash2, LayoutDashboard, Package, Lock } from 'lucide-rea
 
 const ADMIN_PASSWORD = "lojapreta2026"; // Senha padrão simples
 
-const CATEGORIES: Category[] = [
-  "Maquiagem",
-  "Skincare",
-  "Perfumes",
-  "Cabelos",
-  "Corpo e Banho",
-  "Kits Promocionais"
-];
 
 export function Admin() {
-  const { products, addProduct, updateProduct, deleteProduct } = useProductStore();
+  const { products, addProduct, updateProduct, deleteProduct, categories, addCategory, deleteCategory } = useProductStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  const [newCategoryName, setNewCategoryName] = useState("");
   
   // Auth State
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -61,7 +55,7 @@ export function Admin() {
     setEditingProduct(null);
     setFormData({
       name: '',
-      category: 'Maquiagem',
+      category: categories[0] || 'Sem Categoria',
       price: 0,
       image: '',
       shortDescription: '',
@@ -195,7 +189,7 @@ export function Admin() {
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      {CATEGORIES.map(cat => (
+                      {categories.map(cat => (
                         <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                       ))}
                     </SelectContent>
@@ -264,14 +258,49 @@ export function Admin() {
         </div>
 
         {/* Stats Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           <div className="bg-white p-6 rounded-3xl border border-primary/10 shadow-sm">
-            <p className="text-muted-foreground text-sm">Total de Produtos</p>
-            <h3 className="text-3xl font-bold text-primary mt-1">{products.length}</h3>
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <p className="text-muted-foreground text-sm">Total de Produtos</p>
+                <h3 className="text-3xl font-bold text-primary mt-1">{products.length}</h3>
+              </div>
+              <Package className="h-10 w-10 text-primary/20" />
+            </div>
           </div>
-          <div className="bg-white p-6 rounded-3xl border border-primary/10 shadow-sm">
-            <p className="text-muted-foreground text-sm">Categorias Ativas</p>
-            <h3 className="text-3xl font-bold text-primary mt-1">{new Set(products.map(p => p.category)).size}</h3>
+          
+          {/* Gerenciador de Categorias */}
+          <div className="bg-white p-6 rounded-3xl border border-primary/10 shadow-sm flex flex-col h-[250px]">
+            <p className="text-muted-foreground text-sm mb-2">Gerenciar Categorias ({categories.length})</p>
+            <div className="flex gap-2 mb-4">
+              <Input 
+                placeholder="Nova categoria" 
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                className="rounded-xl"
+              />
+              <Button 
+                onClick={() => {
+                  if(newCategoryName.trim()){
+                    addCategory(newCategoryName.trim());
+                    setNewCategoryName("");
+                  }
+                }}
+                className="rounded-xl bg-primary text-white"
+              >
+                Adicionar
+              </Button>
+            </div>
+            <div className="flex-grow overflow-y-auto pr-2 space-y-2">
+              {categories.map(cat => (
+                <div key={cat} className="flex justify-between items-center bg-secondary/30 px-3 py-2 rounded-lg">
+                  <span className="text-sm font-medium">{cat}</span>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:bg-destructive/10" onClick={() => deleteCategory(cat)}>
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

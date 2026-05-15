@@ -1,10 +1,4 @@
-export type Category = 
-  | "Maquiagem" 
-  | "Skincare" 
-  | "Perfumes" 
-  | "Cabelos" 
-  | "Corpo e Banho" 
-  | "Kits Promocionais";
+export type Category = string;
 
 export interface Product {
   id: string;
