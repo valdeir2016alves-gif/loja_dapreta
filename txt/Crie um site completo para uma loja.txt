@@ -1,0 +1,142 @@
+Crie um site completo para uma loja de cosméticos, pronto para publicação no GitHub Pages, utilizando uma stack moderna, leve e compatível com hospedagem estática.
+
+## 🎀 Objetivo do Projeto
+Desenvolver um e-commerce institucional de cosméticos com catálogo de produtos, categorias, busca e painel simples para cadastro de novos produtos sem necessidade de backend tradicional.
+
+## 🛠️ Stack Tecnológica (moderna e otimizada para GitHub Pages)
+
+- React 18
+- Vite
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Lucide React (ícones)
+- Zustand (gerenciamento de estado)
+- React Router DOM
+- LocalStorage para persistência dos dados
+- GitHub Pages para hospedagem
+- gh-pages para deploy automático
+
+## 📦 Funcionalidades Principais
+
+### Página Inicial
+- Banner principal com destaque de promoções.
+- Seção de categorias.
+- Grade de produtos em destaque.
+- Depoimentos de clientes.
+- Rodapé com informações da loja e redes sociais.
+
+### Catálogo de Produtos
+- Exibição em grade responsiva.
+- Cada card deve conter:
+  - Imagem
+  - Nome
+  - Categoria
+  - Preço
+  - Descrição curta
+  - Botão “Ver detalhes”
+
+### Filtros e Busca
+- Pesquisa por nome.
+- Filtro por categoria.
+- Ordenação por:
+  - Menor preço
+  - Maior preço
+  - Ordem alfabética
+
+### Página de Detalhes do Produto
+- Galeria de imagens.
+- Descrição completa.
+- Preço.
+- Categoria.
+- Botão para contato via WhatsApp.
+
+### Categorias
+- Maquiagem
+- Skincare
+- Perfumes
+- Cabelos
+- Corpo e Banho
+- Kits Promocionais
+
+### Painel Administrativo Local
+Criar uma rota `/admin` com:
+- Formulário para cadastrar produtos.
+- Campos:
+  - Nome
+  - Categoria
+  - Preço
+  - URL da imagem
+  - Descrição curta
+  - Descrição completa
+- Edição de produtos.
+- Exclusão de produtos.
+- Persistência no LocalStorage.
+
+### Dados Iniciais
+Inserir ao menos 20 produtos fictícios de cosméticos com imagens reais de exemplo.
+
+## 🎨 Design
+- Visual elegante, feminino e sofisticado.
+- Paleta de cores:
+  - Rosa claro (#FCE7F3)
+  - Rosa médio (#F9A8D4)
+  - Branco
+  - Tons neutros
+- Layout moderno com cards arredondados, sombras suaves e animações sutis.
+- Totalmente responsivo.
+
+## 📱 Responsividade
+- Mobile First.
+- Compatível com celular, tablet e desktop.
+
+## 🔍 SEO
+- Meta tags completas.
+- Open Graph.
+- Títulos dinâmicos por página.
+- URLs amigáveis.
+
+## ⚡ Performance
+- Lazy loading de imagens.
+- Componentização.
+- Código limpo e organizado.
+
+## 📁 Estrutura de Pastas
+src/
+  components/
+  pages/
+  data/
+  hooks/
+  store/
+  types/
+  utils/
+
+## 🚀 Deploy
+Configurar automaticamente para GitHub Pages com:
+- base configurada no `vite.config.ts`
+- script `npm run deploy`
+
+## 📄 README.md
+Gerar README contendo:
+- Descrição do projeto
+- Tecnologias utilizadas
+- Como executar localmente
+- Como publicar no GitHub Pages
+
+## 🧴 Nome da Loja
+Bella Glow Cosméticos
+
+## 🧠 Diferenciais
+- Catálogo totalmente gerenciável localmente.
+- Não depende de backend.
+- Ideal para pequenas lojas.
+- Fácil manutenção.
+
+## 📌 Entregáveis
+- Código-fonte completo.
+- Projeto funcional.
+- Dados de exemplo.
+- README.
+- Configuração de deploy.
+
+Crie o projeto com código limpo, organizado e pronto para produção.

@@ -1,0 +1,104 @@
+# Bella Glow Cosméticos - Implementation Plan
+
+Este documento detalha o plano para construir um e-commerce de cosméticos completo, moderno e estático, otimizado para o GitHub Pages.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Persistência de Dados**: O sistema utilizará `LocalStorage` para o Painel Administrativo. Isso significa que as alterações feitas no `/admin` serão salvas apenas no navegador do usuário que as realizou. Para uma loja real com múltiplos administradores, seria necessário um backend (ex: Firebase, Supabase ou uma API REST). Confirmar se este modelo é suficiente para a fase atual.
+
+> [!TIP]
+> **Imagens**: Utilizaremos imagens do Unsplash ou similares para os 20 produtos iniciais para garantir um visual profissional.
+
+## Proposed Changes
+
+### 1. Project Initialization & Setup
+Configuração da estrutura base com as tecnologias solicitadas.
+
+#### [NEW] [Project Scaffolding]
+- Inicializar Vite com template `react-ts`.
+- Configurar Tailwind CSS e PostCSS.
+- Inicializar `shadcn/ui` (configurando `components.json`).
+- Instalar dependências: `lucide-react`, `zustand`, `react-router-dom`, `gh-pages`.
+
+### 2. Design System & Theme
+Implementação da identidade visual "Bella Glow".
+
+#### [MODIFY] [tailwind.config.js](file:///c:/loja_preta/tailwind.config.js)
+- Adicionar paleta de cores:
+  - `primary`: Pink médio (#F9A8D4)
+  - `secondary`: Pink claro (#FCE7F3)
+  - `accent`: Tons dourados ou neutros sofisticados.
+- Configurar fontes (Outfit/Inter).
+- Definir bordas arredondadas e sombras suaves.
+
+#### [MODIFY] [index.css](file:///c:/loja_preta/src/index.css)
+- Adicionar variáveis de cor para shadcn/ui.
+- Implementar animações de fade-in e hover suave.
+
+### 3. State Management & Data
+Definição dos modelos de dados e lógica de persistência.
+
+#### [NEW] [types/product.ts](file:///c:/loja_preta/src/types/product.ts)
+- Interfaces para `Product`, `Category`, e `ProductFilters`.
+
+#### [NEW] [store/useProductStore.ts](file:///c:/loja_preta/src/store/useProductStore.ts)
+- Store Zustand para gerenciar o estado dos produtos.
+- Middleware de persistência para `LocalStorage`.
+- Funções CRUD: `addProduct`, `updateProduct`, `deleteProduct`.
+
+#### [NEW] [data/initialData.ts](file:///c:/loja_preta/src/data/initialData.ts)
+- Mock com 20 produtos iniciais categorizados.
+
+### 4. Components Layout
+Componentes reutilizáveis para a interface.
+
+#### [NEW] [components/layout/Navbar.tsx](file:///c:/loja_preta/src/components/layout/Navbar.tsx)
+- Logo, links de navegação, barra de busca compacta.
+
+#### [NEW] [components/product/ProductCard.tsx](file:///c:/loja_preta/src/components/product/ProductCard.tsx)
+- Card com imagem, preço, categoria e botão "Ver Detalhes".
+
+#### [NEW] [components/SEO.tsx](file:///c:/loja_preta/src/components/SEO.tsx)
+- Componente para gerenciar meta tags dinamicamente (Open Graph, Títulos).
+
+### 5. Pages
+Desenvolvimento das telas principais.
+
+#### [NEW] [pages/Home.tsx](file:///c:/loja_preta/src/pages/Home.tsx)
+- Hero section com banner.
+- Carrossel ou grade de categorias.
+- Seção "Mais Vendidos".
+
+#### [NEW] [pages/Catalog.tsx](file:///c:/loja_preta/src/pages/Catalog.tsx)
+- Filtros laterais (ou topo) por categoria.
+- Ordenação e busca em tempo real.
+
+#### [NEW] [pages/ProductDetails.tsx](file:///c:/loja_preta/src/pages/ProductDetails.tsx)
+- Galeria de imagens.
+- Descrição detalhada.
+- Botão flutuante/destacado para WhatsApp com mensagem pré-definida.
+
+#### [NEW] [pages/Admin.tsx](file:///c:/loja_preta/src/pages/Admin.tsx)
+- Dashboard com lista de produtos.
+- Modal/Formulário para adição e edição.
+
+### 6. Deployment Configuration
+Preparação para o GitHub Pages.
+
+#### [MODIFY] [vite.config.ts](file:///c:/loja_preta/vite.config.ts)
+- Definir `base: "/NOME-DO-REPOSITORIO/"`.
+
+#### [MODIFY] [package.json](file:///c:/loja_preta/package.json)
+- Adicionar scripts `predeploy` e `deploy`.
+
+## Verification Plan
+
+### Automated Tests
+- Build integrity check with `npm run build`.
+
+### Manual Verification
+- Testar fluxo de cadastro no `/admin` e verificar persistência após refresh.
+- Testar responsividade em dispositivos móveis (Chrome DevTools).
+- Validar link do WhatsApp com dados dinâmicos do produto.
+- Verificar se as meta tags mudam corretamente entre as páginas.

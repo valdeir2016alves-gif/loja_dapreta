@@ -21,7 +21,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Pencil, Trash2, LayoutDashboard, Package } from 'lucide-react';
+import { Plus, Pencil, Trash2, LayoutDashboard, Package, Lock } from 'lucide-react';
+
+const ADMIN_PASSWORD = "lojapreta2026"; // Senha padrão simples
 
 const CATEGORIES: Category[] = [
   "Maquiagem",
@@ -36,6 +38,13 @@ export function Admin() {
   const { products, addProduct, updateProduct, deleteProduct } = useProductStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  
+  // Auth State
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return sessionStorage.getItem('adminAuth') === 'true';
+  });
+  const [passwordInput, setPasswordInput] = useState('');
+  const [loginError, setLoginError] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState<Omit<Product, 'id'>>({
@@ -89,6 +98,52 @@ export function Admin() {
     }
     setIsDialogOpen(false);
   };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordInput === ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('adminAuth', 'true');
+      setLoginError(false);
+    } else {
+      setLoginError(true);
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <>
+        <SEO title="Login Administrativo" />
+        <div className="container mx-auto px-4 py-20 flex justify-center items-center min-h-[60vh]">
+          <div className="bg-white p-8 rounded-3xl border border-primary/10 shadow-sm max-w-md w-full text-center">
+            <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
+              <Lock className="h-8 w-8" />
+            </div>
+            <h1 className="text-2xl font-bold text-primary mb-2">Acesso Restrito</h1>
+            <p className="text-muted-foreground mb-8 text-sm">Digite a senha administrativa para gerenciar o catálogo.</p>
+            
+            <form onSubmit={handleLogin} className="space-y-4 text-left">
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <Input 
+                  id="password" 
+                  type="password" 
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  className="rounded-xl border-primary/20"
+                  placeholder="••••••••"
+                />
+                {loginError && <p className="text-destructive text-sm mt-1">Senha incorreta.</p>}
+              </div>
+              <Button type="submit" className="w-full bg-primary text-white hover:bg-primary/90 h-12 rounded-xl">
+                Acessar Painel
+              </Button>
+            </form>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
