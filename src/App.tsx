@@ -6,9 +6,14 @@ import { Catalog } from './pages/Catalog';
 import { ProductDetails } from './pages/ProductDetails';
 import { Admin } from './pages/Admin';
 import { Cart } from './components/cart/Cart';
+import { CustomerGate } from './components/auth/CustomerGate';
+import { useLocation } from 'react-router-dom';
 
 function App() {
-  return (
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  const content = (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow">
@@ -22,6 +27,16 @@ function App() {
       <Footer />
       <Cart />
     </div>
+  );
+
+  if (isAdminRoute) {
+    return content;
+  }
+
+  return (
+    <CustomerGate>
+      {content}
+    </CustomerGate>
   );
 }
 

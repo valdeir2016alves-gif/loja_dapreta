@@ -1,5 +1,6 @@
 import { ShoppingBag, Plus, Minus, Trash2 } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
+import { useCustomerStore } from '@/store/useCustomerStore';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,12 +11,13 @@ import {
 
 export function Cart() {
   const { items, isCartOpen, openCart, closeCart, removeItem, updateQuantity, clearCart } = useCartStore();
+  const customerName = useCustomerStore((state) => state.name);
 
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
   const totalPrice = items.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
 
   const whatsappMessage = encodeURIComponent(
-    `Olá Loja da Preta! Gostaria de finalizar o meu pedido:\n\n${items
+    `Olá Loja da Preta! Aqui é ${customerName}. Gostaria de finalizar o meu pedido:\n\n${items
       .map((item) => `- ${item.quantity}x ${item.product.name} (R$ ${item.product.price.toFixed(2)})`)
       .join('\n')}\n\n*Total: R$ ${totalPrice.toFixed(2)}*`
   );
