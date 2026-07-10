@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useProductStore } from '@/store/useProductStore';
+import { useCartStore } from '@/store/useCartStore';
 import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +10,7 @@ import { useLazyImage } from '@/hooks/useLazyImage';
 export function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const product = useProductStore((state) => state.getProductById(id || ""));
+  const addItem = useCartStore((state) => state.addItem);
   const { imgRef, isInView, isLoaded, setIsLoaded } = useLazyImage(product?.image || "");
 
   if (!product) {
@@ -82,7 +84,15 @@ export function ProductDetails() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
-              <Button className="flex-1 h-14 bg-primary text-white hover:bg-primary/90 text-lg rounded-2xl shadow-lg shadow-primary/20">
+              <Button 
+                onClick={() => {
+                  if (product) {
+                    addItem(product);
+                    alert("Produto adicionado ao carrinho com sucesso!");
+                  }
+                }}
+                className="flex-1 h-14 bg-primary text-white hover:bg-primary/90 text-lg rounded-2xl shadow-lg shadow-primary/20"
+              >
                 <ShoppingBag className="mr-2 h-5 w-5" /> Adicionar ao Carrinho
               </Button>
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
@@ -92,21 +102,7 @@ export function ProductDetails() {
               </a>
             </div>
 
-            {/* Benefits Mini List */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-secondary/20 rounded-2xl border border-primary/10">
-              <div className="flex items-center gap-3">
-                <Truck className="h-5 w-5 text-primary" />
-                <span className="text-xs font-medium">Frete Grátis</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <ShieldCheck className="h-5 w-5 text-primary" />
-                <span className="text-xs font-medium">Seguro</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <RefreshCw className="h-5 w-5 text-primary" />
-                <span className="text-xs font-medium">Troca Fácil</span>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

@@ -1,11 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
 import { ShoppingBag, Search, Menu, X, User } from 'lucide-react';
 import { useState } from 'react';
+import { useCartStore } from '@/store/useCartStore';
 import { Button } from '@/components/ui/button';
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const cartItems = useCartStore((state) => state.items);
+  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   const navLinks = [
     { name: 'Início', path: '/' },
@@ -49,9 +52,11 @@ export function Navbar() {
           </Link>
           <Button variant="default" size="icon" className="relative bg-primary text-white hover:bg-primary/90">
             <ShoppingBag className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 bg-white text-primary text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-primary">
-              0
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-white text-primary text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-primary">
+                {cartCount}
+              </span>
+            )}
           </Button>
           
           {/* Mobile Menu Toggle */}
