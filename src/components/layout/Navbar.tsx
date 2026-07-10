@@ -8,6 +8,7 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const cartItems = useCartStore((state) => state.items);
+  const openCart = useCartStore((state) => state.openCart);
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   const navLinks = [
@@ -50,7 +51,12 @@ export function Navbar() {
               <User className="h-5 w-5" />
             </Button>
           </Link>
-          <Button variant="default" size="icon" className="relative bg-primary text-white hover:bg-primary/90">
+          <Button 
+            variant="default" 
+            size="icon" 
+            onClick={openCart}
+            className="relative bg-primary text-white hover:bg-primary/90"
+          >
             <ShoppingBag className="h-5 w-5" />
             {cartCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-white text-primary text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-primary">
@@ -84,7 +90,7 @@ export function Navbar() {
               {link.name}
             </Link>
           ))}
-          <Button className="w-full bg-primary text-white">Ver Carrinho</Button>
+          <Button onClick={() => { setIsMenuOpen(false); openCart(); }} className="w-full bg-primary text-white">Ver Carrinho</Button>
         </div>
       )}
     </nav>

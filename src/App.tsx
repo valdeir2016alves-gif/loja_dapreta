@@ -5,6 +5,7 @@ import { Home } from './pages/Home';
 import { Catalog } from './pages/Catalog';
 import { ProductDetails } from './pages/ProductDetails';
 import { Admin } from './pages/Admin';
+import { Cart } from './components/cart/Cart';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
+      <Cart />
     </div>
   );
 }

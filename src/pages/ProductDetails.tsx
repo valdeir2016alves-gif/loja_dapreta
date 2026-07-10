@@ -88,7 +88,6 @@ export function ProductDetails() {
                 onClick={() => {
                   if (product) {
                     addItem(product);
-                    alert("Produto adicionado ao carrinho com sucesso!");
                   }
                 }}
                 className="flex-1 h-14 bg-primary text-white hover:bg-primary/90 text-lg rounded-2xl shadow-lg shadow-primary/20"
