@@ -1,4 +1,4 @@
-import { ShoppingBag, X, Plus, Minus, Trash2 } from 'lucide-react';
+import { ShoppingBag, Plus, Minus, Trash2 } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
 import { Button } from '@/components/ui/button';
 import {
