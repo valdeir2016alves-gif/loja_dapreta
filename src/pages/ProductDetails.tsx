@@ -4,7 +4,7 @@ import { useCartStore } from '@/store/useCartStore';
 import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, ArrowLeft, Truck, ShieldCheck, RefreshCw, ShoppingBag } from 'lucide-react';
+import { MessageCircle, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { useLazyImage } from '@/hooks/useLazyImage';
 
 export function ProductDetails() {
