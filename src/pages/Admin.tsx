@@ -21,7 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Pencil, Trash2, LayoutDashboard, Package, Lock } from 'lucide-react';
+import { Plus, Pencil, Trash2, LayoutDashboard, Package, Lock, Upload, Image as ImageIcon } from 'lucide-react';
+import { compressImage } from '@/lib/imageUtils';
 
 const ADMIN_PASSWORD = "lojapreta2026"; // Senha padrão simples
 
@@ -30,8 +31,26 @@ export function Admin() {
   const { products, addProduct, updateProduct, deleteProduct, categories, addCategory, deleteCategory } = useProductStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [newCategoryName, setNewCategoryName] = useState("");
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+      const compressed = await compressImage(file);
+      setFormData((prev) => ({ ...prev, image: compressed }));
+    } catch (err) {
+      console.error('Erro ao processar imagem:', err);
+      alert('Não foi possível carregar esta imagem. Tente outro arquivo.');
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
+    }
+  };
   
   // Auth State
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -81,6 +100,10 @@ export function Admin() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.image.trim()) {
+      alert('Por favor, adicione uma foto para o produto (escolhendo do dispositivo ou informando o link).');
+      return;
+    }
     if (editingProduct) {
       updateProduct(editingProduct.id, { ...formData, id: editingProduct.id });
     } else {
@@ -160,7 +183,7 @@ export function Admin() {
                 </Button>
               }
             />
-            <DialogContent className="max-w-2xl bg-white rounded-3xl sm:rounded-3xl">
+            <DialogContent className="max-w-2xl bg-white rounded-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-bold text-primary">
                   {editingProduct ? 'Editar Produto' : 'Cadastrar Novo Produto'}
@@ -196,7 +219,7 @@ export function Admin() {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="price">Preço (R$)</Label>
                   <Input 
                     id="price" 
@@ -209,16 +232,70 @@ export function Admin() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="image">URL da Imagem</Label>
-                  <Input 
-                    id="image" 
-                    required 
-                    placeholder="https://unsplash.com/..."
-                    value={formData.image}
-                    onChange={(e) => setFormData({...formData, image: e.target.value})}
-                    className="rounded-xl border-primary/20"
-                  />
+                {/* Seção da Imagem / Upload */}
+                <div className="space-y-2 md:col-span-2">
+                  <Label>Foto do Produto *</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start border border-primary/15 bg-primary/[0.02] p-4 rounded-2xl">
+                    {/* Botão de Upload e campo alternativo de URL */}
+                    <div className="space-y-3">
+                      <label className="flex flex-col items-center justify-center border-2 border-dashed border-primary/30 hover:border-primary/60 bg-white hover:bg-primary/5 transition-colors rounded-2xl p-4 cursor-pointer text-center group shadow-sm">
+                        <Upload className="h-6 w-6 text-primary mb-2 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm font-semibold text-primary">
+                          {isUploading ? 'Otimizando foto...' : 'Escolher Foto do Dispositivo'}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground mt-1">
+                          Selecionar do computador ou celular
+                        </span>
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          disabled={isUploading}
+                          onChange={handleFileUpload} 
+                        />
+                      </label>
+
+                      <div className="flex items-center gap-2">
+                        <div className="h-px bg-border flex-1" />
+                        <span className="text-[11px] text-muted-foreground">ou cole um link</span>
+                        <div className="h-px bg-border flex-1" />
+                      </div>
+
+                      <Input 
+                        id="image" 
+                        placeholder="https://... ou caminho local"
+                        value={formData.image}
+                        onChange={(e) => setFormData({...formData, image: e.target.value})}
+                        className="rounded-xl border-primary/20 text-xs h-9"
+                      />
+                    </div>
+
+                    {/* Preview da Imagem */}
+                    <div className="border border-border rounded-2xl p-3 bg-white flex flex-col items-center justify-center min-h-[160px] text-center">
+                      {formData.image ? (
+                        <div className="w-full flex flex-col items-center gap-2">
+                          <img 
+                            src={formData.image} 
+                            alt="Pré-visualização do produto" 
+                            className="h-32 w-auto max-w-full object-contain rounded-xl shadow-sm border border-border bg-muted/10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, image: '' })}
+                            className="text-xs text-destructive hover:underline flex items-center gap-1 font-medium"
+                          >
+                            <Trash2 className="h-3 w-3" /> Remover foto
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="text-muted-foreground p-3 flex flex-col items-center">
+                          <ImageIcon className="h-8 w-8 mb-1 opacity-40 text-primary" />
+                          <p className="text-xs font-medium">Nenhuma foto selecionada</p>
+                          <p className="text-[11px] text-muted-foreground mt-0.5">Faça upload ou cole um link para pré-visualizar</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2 md:col-span-2">

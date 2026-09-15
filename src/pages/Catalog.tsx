@@ -27,7 +27,7 @@ export function Catalog() {
   const sortBy = (searchParams.get("sort") as SortOption) || "alphabetical";
 
   const filteredProducts = useMemo(() => {
-    let result = products.filter((p) => {
+    const result = products.filter((p) => {
       const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
       const matchesCategory = currentCategory === "All" || p.category === currentCategory;
       return matchesSearch && matchesCategory;
