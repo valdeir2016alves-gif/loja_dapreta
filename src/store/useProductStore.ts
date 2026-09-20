@@ -1,19 +1,7 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { type Product } from '../types/product';
-import { initialProducts } from '../data/initialData';
-
-interface ProductState {
-  products: Product[];
-  categories: string[];
-  addProduct: (product: Product) => void;
-  updateProduct: (id: string, updatedProduct: Product) => void;
-  deleteProduct: (id: string) => void;
-  getProductById: (id: string) => Product | undefined;
-  addCategory: (category: string) => void;
-  updateCategory: (oldCategory: string, newCategory: string) => void;
-  deleteCategory: (category: string) => void;
-}
+import { defineStore } from 'pinia';
+import { ref, watch } from 'vue';
+import type { Product } from '@/types/product';
+import { initialProducts } from '@/data/initialData';
 
 const defaultCategories = [
   "Maquiagem",
@@ -24,47 +12,110 @@ const defaultCategories = [
   "Kits Promocionais"
 ];
 
-export const useProductStore = create<ProductState>()(
-  persist(
-    (set, get) => ({
-      products: initialProducts,
-      categories: defaultCategories,
-      addProduct: (product) => 
-        set((state) => ({ products: [...state.products, product] })),
-      updateProduct: (id, updatedProduct) =>
-        set((state) => ({
-          products: state.products.map((p) => (p.id === id ? updatedProduct : p)),
-        })),
-      deleteProduct: (id) =>
-        set((state) => ({
-          products: state.products.filter((p) => p.id !== id),
-        })),
-      getProductById: (id) => {
-        return get().products.find((p) => p.id === id);
-      },
-      addCategory: (category) =>
-        set((state) => ({
-          categories: state.categories.includes(category) 
-            ? state.categories 
-            : [...state.categories, category]
-        })),
-      updateCategory: (oldCategory, newCategory) =>
-        set((state) => ({
-          categories: state.categories.map(c => c === oldCategory ? newCategory : c),
-          products: state.products.map(p => 
-            p.category === oldCategory ? { ...p, category: newCategory } : p
-          )
-        })),
-      deleteCategory: (category) =>
-        set((state) => ({
-          categories: state.categories.filter(c => c !== category),
-          products: state.products.map(p => 
-            p.category === category ? { ...p, category: "Sem Categoria" } : p
-          )
-        })),
-    }),
-    {
-      name: 'bella-glow-products',
+const STORAGE_KEY = 'bella-glow-products';
+
+function loadInitialData(): { products: Product[]; categories: string[] } {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed?.state) {
+        return {
+          products: parsed.state.products || initialProducts,
+          categories: parsed.state.categories || defaultCategories,
+        };
+      } else if (parsed?.products) {
+        return {
+          products: parsed.products,
+          categories: parsed.categories || defaultCategories,
+        };
+      }
     }
-  )
-);
+  } catch (err) {
+    console.error('Erro ao ler localStorage de produtos:', err);
+  }
+  return { products: initialProducts, categories: defaultCategories };
+}
+
+export const useProductStore = defineStore('product', () => {
+  const initial = loadInitialData();
+  const products = ref<Product[]>(initial.products);
+  const categories = ref<string[]>(initial.categories);
+
+  function persist() {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          state: {
+            products: products.value,
+            categories: categories.value,
+          },
+          version: 0,
+        })
+      );
+    } catch (err) {
+      console.error('Erro ao salvar produtos no localStorage:', err);
+    }
+  }
+
+  watch([products, categories], persist, { deep: true });
+
+  function addProduct(product: Product) {
+    products.value.push(product);
+  }
+
+  function updateProduct(id: string, updatedProduct: Product) {
+    const idx = products.value.findIndex((p) => p.id === id);
+    if (idx !== -1) {
+      products.value[idx] = updatedProduct;
+    }
+  }
+
+  function deleteProduct(id: string) {
+    products.value = products.value.filter((p) => p.id !== id);
+  }
+
+  function getProductById(id: string): Product | undefined {
+    return products.value.find((p) => p.id === id);
+  }
+
+  function addCategory(category: string) {
+    if (!categories.value.includes(category)) {
+      categories.value.push(category);
+    }
+  }
+
+  function updateCategory(oldCategory: string, newCategory: string) {
+    const idx = categories.value.indexOf(oldCategory);
+    if (idx !== -1) {
+      categories.value[idx] = newCategory;
+    }
+    products.value.forEach((p) => {
+      if (p.category === oldCategory) {
+        p.category = newCategory;
+      }
+    });
+  }
+
+  function deleteCategory(category: string) {
+    categories.value = categories.value.filter((c) => c !== category);
+    products.value.forEach((p) => {
+      if (p.category === category) {
+        p.category = "Sem Categoria";
+      }
+    });
+  }
+
+  return {
+    products,
+    categories,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    getProductById,
+    addCategory,
+    updateCategory,
+    deleteCategory,
+  };
+});
