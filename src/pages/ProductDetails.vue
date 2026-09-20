@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import { ArrowLeft, ShoppingBag, MessageCircle } from 'lucide-vue-next';
 import { useProductStore } from '@/store/useProductStore';
 import { useCartStore } from '@/store/useCartStore';
+import { formatImageUrl } from '@/lib/utils';
 
 const route = useRoute();
 const productStore = useProductStore();
@@ -47,7 +48,7 @@ function handleAddToCart() {
         <!-- Image Box -->
         <div class="relative aspect-square rounded-3xl overflow-hidden bg-secondary/10 border border-primary/10 group shadow-sm">
           <img
-            :src="product.image"
+            :src="formatImageUrl(product.image)"
             :alt="product.name"
             @load="isLoaded = true"
             class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"

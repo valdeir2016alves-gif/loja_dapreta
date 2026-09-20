@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { ShoppingBag, Plus, Minus, Trash2, X } from 'lucide-vue-next';
 import { useCartStore } from '@/store/useCartStore';
+import { formatImageUrl } from '@/lib/utils';
 
 const cartStore = useCartStore();
 
@@ -109,7 +110,7 @@ function handleClear() {
         >
           <div class="w-20 h-20 rounded-xl overflow-hidden bg-white flex-shrink-0 border border-border">
             <img
-              :src="item.product.image"
+              :src="formatImageUrl(item.product.image)"
               :alt="item.product.name"
               class="w-full h-full object-cover"
             />

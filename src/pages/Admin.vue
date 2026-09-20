@@ -14,6 +14,7 @@ import {
 } from 'lucide-vue-next';
 import { useProductStore } from '@/store/useProductStore';
 import { compressImage } from '@/lib/imageUtils';
+import { formatImageUrl } from '@/lib/utils';
 import type { Product } from '@/types/product';
 
 const ADMIN_PASSWORD = 'lojapreta2026';
@@ -367,7 +368,7 @@ function handleImportBackup(e: Event) {
               <tr v-for="prod in products" :key="prod.id" class="hover:bg-secondary/10 transition-colors">
                 <td class="p-4 pl-6 flex items-center gap-3">
                   <img
-                    :src="prod.image"
+                    :src="formatImageUrl(prod.image)"
                     :alt="prod.name"
                     class="w-12 h-12 rounded-xl object-cover bg-secondary/20 border border-border flex-shrink-0"
                   />
@@ -513,7 +514,7 @@ function handleImportBackup(e: Event) {
               <div class="border border-border rounded-2xl p-3 bg-white flex flex-col items-center justify-center min-h-[160px] text-center">
                 <div v-if="formData.image" class="w-full flex flex-col items-center gap-2">
                   <img
-                    :src="formData.image"
+                    :src="formatImageUrl(formData.image)"
                     alt="Pré-visualização"
                     class="h-32 w-auto max-w-full object-contain rounded-xl shadow-sm border border-border bg-muted/10"
                   />

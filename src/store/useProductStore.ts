@@ -9,7 +9,8 @@ const defaultCategories = [
   "Perfumes",
   "Cabelos",
   "Corpo e Banho",
-  "Kits Promocionais"
+  "Kits Promocionais",
+  "Casa",
 ];
 
 const STORAGE_KEY = 'bella-glow-products';
@@ -19,17 +20,22 @@ function loadInitialData(): { products: Product[]; categories: string[] } {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed?.state) {
-        return {
-          products: parsed.state.products || initialProducts,
-          categories: parsed.state.categories || defaultCategories,
-        };
-      } else if (parsed?.products) {
-        return {
-          products: parsed.products,
-          categories: parsed.categories || defaultCategories,
-        };
+      const savedProducts: Product[] = parsed?.state?.products || parsed?.products || [];
+      const savedCategories: string[] = parsed?.state?.categories || parsed?.categories || [];
+
+      let finalProducts = initialProducts;
+      if (savedProducts.length > 0) {
+        const savedIds = new Set(savedProducts.map((p) => p.id));
+        const missingInitial = initialProducts.filter((p) => !savedIds.has(p.id));
+        finalProducts = [...savedProducts, ...missingInitial];
       }
+
+      const finalCategories = Array.from(new Set([...defaultCategories, ...savedCategories]));
+
+      return {
+        products: finalProducts,
+        categories: finalCategories,
+      };
     }
   } catch (err) {
     console.error('Erro ao ler localStorage de produtos:', err);

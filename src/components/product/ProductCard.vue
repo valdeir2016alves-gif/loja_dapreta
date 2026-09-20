@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { ShoppingCart, MessageCircle } from 'lucide-vue-next';
 import type { Product } from '@/types/product';
 import { useCartStore } from '@/store/useCartStore';
+import { formatImageUrl } from '@/lib/utils';
 
 const props = defineProps<{
   product: Product;
@@ -41,7 +42,7 @@ function handleViewDetails() {
       <!-- Foto do Produto -->
       <div class="relative aspect-square overflow-hidden bg-secondary/15">
         <img
-          :src="product.image"
+          :src="formatImageUrl(product.image)"
           :alt="product.name"
           @load="isLoaded = true"
           class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
