@@ -62,14 +62,10 @@ function scrollToProducts() {
         </div>
 
         <!-- Título e Saudação -->
-        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-primary mb-3 leading-tight tracking-tight">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-primary mb-6 sm:mb-8 leading-tight tracking-tight">
           Olá! Seja bem-vinda à <br class="sm:hidden" />
           <span class="text-primary underline decoration-primary/30">Loja da Preta</span> ❤️
         </h1>
-
-        <p class="text-base sm:text-xl text-gray-700 max-w-2xl mx-auto mb-8 leading-relaxed font-medium">
-          Cosméticos, perfumes, maquiagens e produtos Avon originais com atendimento rápido, humano e entregas em <strong>São Gabriel - RS</strong>.
-        </p>
 
         <!-- Botões de Ação Principais (Grandes para o Celular) -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3.5 max-w-lg mx-auto">
