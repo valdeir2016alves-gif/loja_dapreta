@@ -28,19 +28,6 @@ function handleOpenCart() {
 
 <template>
   <header class="sticky top-0 z-50 w-full shadow-sm bg-white">
-    <!-- Barra Superior de Contato / Informação -->
-    <div class="bg-[#243b4f] text-white py-1.5 px-4 text-xs sm:text-sm text-center font-medium flex items-center justify-center gap-2">
-      <span>🚚 Entregas em São Gabriel e Região</span>
-      <span class="opacity-60 hidden sm:inline">•</span>
-      <a
-        :href="whatsappUrl"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="hidden sm:inline-flex items-center gap-1 hover:underline text-green-300 font-semibold"
-      >
-        <MessageCircle class="h-3.5 w-3.5" /> WhatsApp: (55) 99991-1746
-      </a>
-    </div>
 
     <!-- Navegação Principal -->
     <nav class="border-b border-primary/10 bg-white/95 backdrop-blur-md">

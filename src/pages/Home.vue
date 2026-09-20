@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   Heart,
   PhoneCall,
-  Sparkles,
 } from 'lucide-vue-next';
 import { useProductStore } from '@/store/useProductStore';
 import ProductCard from '@/components/product/ProductCard.vue';
@@ -23,7 +22,6 @@ const whatsappUrl =
   'https://api.whatsapp.com/send/?phone=5555999911746&text=Ol%C3%A1%21+Vim+pelo+site+da+Loja+da+Preta+e+gostaria+de+tirar+uma+d%C3%BAvida.&type=phone_number&app_absent=0';
 
 const products = computed(() => productStore.products.slice(0, 8));
-const categories = computed(() => productStore.categories);
 
 function handleSearch() {
   if (searchQuery.value.trim()) {
@@ -140,37 +138,6 @@ function scrollToProducts() {
       </div>
     </section>
 
-    <!-- Seção de Categorias com Botões Grandes e Fáceis de Tocar -->
-    <section class="container mx-auto px-4 max-w-5xl">
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h2 class="text-2xl sm:text-3xl font-black text-primary">Categorias</h2>
-          <p class="text-sm text-gray-600 font-medium">Toque para ver os produtos de cada tipo:</p>
-        </div>
-        <router-link
-          to="/catalog"
-          class="text-sm sm:text-base font-bold text-primary hover:underline flex items-center gap-1"
-        >
-          Ver todas <ArrowRight class="h-4 w-4" />
-        </router-link>
-      </div>
-
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 sm:gap-5">
-        <router-link
-          v-for="cat in categories.slice(0, 6)"
-          :key="cat"
-          :to="`/catalog?cat=${encodeURIComponent(cat)}`"
-          class="group p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-primary/15 hover:border-primary/50 shadow-sm hover:shadow-md transition-all text-center flex flex-col items-center justify-center gap-2 active:scale-98"
-        >
-          <div class="w-12 h-12 rounded-2xl bg-secondary/40 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
-            <Sparkles class="h-6 w-6" />
-          </div>
-          <span class="text-base sm:text-lg font-bold text-primary leading-tight">
-            {{ cat }}
-          </span>
-        </router-link>
-      </div>
-    </section>
 
     <!-- Vitrine de Produtos (Direto na Página Inicial!) -->
     <section id="vitrine-produtos" class="container mx-auto px-4 max-w-6xl scroll-mt-24">
@@ -270,19 +237,6 @@ function scrollToProducts() {
           </div>
         </div>
 
-        <!-- Banner com Botão Final -->
-        <div class="mt-10 bg-white p-6 rounded-3xl border-2 border-green-600/30 text-center shadow-sm">
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Tem alguma dúvida ou prefere fazer o pedido por telefone?</h3>
-          <p class="text-sm text-gray-600 mb-5">Estamos prontas para lhe atender com paciência e atenção.</p>
-          <a
-            :href="whatsappUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-bold text-lg shadow-md transition-transform active:scale-95"
-          >
-            <MessageCircle class="h-6 w-6" /> Clique aqui para falar conosco
-          </a>
-        </div>
       </div>
     </section>
   </div>
