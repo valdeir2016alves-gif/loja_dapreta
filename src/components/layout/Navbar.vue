@@ -14,7 +14,7 @@ const cartCount = computed(() => cartStore.totalItems);
 const navLinks = [
   { name: 'Início', path: '/' },
   { name: 'Catálogo de Produtos', path: '/catalog' },
-  { name: 'Sobre a Loja', path: '/#about' },
+  { name: 'Sobre a Loja', path: '/about' },
 ];
 
 const logoUrl = import.meta.env.BASE_URL + 'logo.jpg';

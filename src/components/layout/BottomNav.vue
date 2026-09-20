@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { Home, ShoppingBag, MessageCircle, ShoppingCart } from 'lucide-vue-next';
+import { Home, ShoppingBag, MessageCircle, ShoppingCart, Info } from 'lucide-vue-next';
 import { useCartStore } from '@/store/useCartStore';
 
 const route = useRoute();
@@ -58,6 +58,16 @@ function handleOpenCart() {
         </div>
         <span class="text-[11px] font-bold text-green-700 mt-0.5">WhatsApp</span>
       </a>
+
+      <!-- Sobre a Loja -->
+      <router-link
+        to="/about"
+        class="flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-colors"
+        :class="route.path === '/about' ? 'text-primary font-bold' : 'text-gray-500 font-medium'"
+      >
+        <Info class="h-6 w-6" />
+        <span class="text-xs mt-1">Sobre</span>
+      </router-link>
 
       <!-- Carrinho -->
       <button
