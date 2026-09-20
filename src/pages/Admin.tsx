@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Pencil, Trash2, LayoutDashboard, Package, Lock, Upload, Image as ImageIcon } from 'lucide-react';
+import { Plus, Pencil, Trash2, LayoutDashboard, Package, Lock, Upload, Image as ImageIcon, Download } from 'lucide-react';
 import { compressImage } from '@/lib/imageUtils';
 
 const ADMIN_PASSWORD = "lojapreta2026"; // Senha padrão simples
@@ -50,6 +50,48 @@ export function Admin() {
       setIsUploading(false);
       e.target.value = '';
     }
+  };
+
+  const handleExportBackup = () => {
+    const data = localStorage.getItem('bella-glow-products');
+    if (!data) {
+      alert('Nenhum dado encontrado para exportar.');
+      return;
+    }
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `loja_dapreta_produtos_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const content = event.target?.result as string;
+        const parsed = JSON.parse(content);
+        if (parsed && (parsed.state || parsed.products)) {
+          // Garante formato Zustand persist
+          const dataToSave = parsed.state ? content : JSON.stringify({ state: parsed, version: 0 });
+          localStorage.setItem('bella-glow-products', dataToSave);
+          alert('Produtos e categorias importados com sucesso! Atualizando catálogo...');
+          window.location.reload();
+        } else {
+          alert('Arquivo de catálogo inválido.');
+        }
+      } catch (err) {
+        console.error('Erro ao importar arquivo:', err);
+        alert('Erro ao processar o arquivo selecionado.');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
   };
   
   // Auth State
@@ -175,15 +217,38 @@ export function Admin() {
             <p className="text-muted-foreground mt-1">Gerencie seu catálogo de produtos Bella Glow.</p>
           </div>
           
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger
-              render={
-                <Button onClick={handleOpenAdd} className="bg-primary text-white hover:bg-primary/90 rounded-xl h-12 px-6">
-                  <Plus className="mr-2 h-5 w-5" /> Novo Produto
-                </Button>
-              }
-            />
-            <DialogContent className="max-w-2xl bg-white rounded-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto">
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Botão Exportar Backup */}
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={handleExportBackup}
+              className="rounded-xl h-12 px-4 border-primary/20 hover:bg-primary/10 hover:text-primary gap-2"
+              title="Baixar arquivo com todos os produtos"
+            >
+              <Download className="h-4 w-4" /> Exportar Dados
+            </Button>
+
+            {/* Botão Importar Backup */}
+            <label className="inline-flex items-center justify-center rounded-xl h-12 px-4 border border-primary/20 hover:bg-primary/10 text-primary font-medium text-sm cursor-pointer transition-colors gap-2">
+              <Upload className="h-4 w-4" /> Importar Dados
+              <input 
+                type="file" 
+                accept=".json" 
+                className="hidden" 
+                onChange={handleImportBackup} 
+              />
+            </label>
+
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger
+                render={
+                  <Button onClick={handleOpenAdd} className="bg-primary text-white hover:bg-primary/90 rounded-xl h-12 px-6">
+                    <Plus className="mr-2 h-5 w-5" /> Novo Produto
+                  </Button>
+                }
+              />
+              <DialogContent className="max-w-2xl bg-white rounded-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-bold text-primary">
                   {editingProduct ? 'Editar Produto' : 'Cadastrar Novo Produto'}
@@ -332,6 +397,7 @@ export function Admin() {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {/* Stats Summary */}
