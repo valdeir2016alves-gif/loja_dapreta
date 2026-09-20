@@ -11,6 +11,7 @@ import {
 } from 'lucide-vue-next';
 import { useProductStore } from '@/store/useProductStore';
 import ProductCard from '@/components/product/ProductCard.vue';
+import SpecularCard from '@/components/ui/SpecularCard.vue';
 
 const router = useRouter();
 const productStore = useProductStore();
@@ -109,9 +110,9 @@ function scrollToProducts() {
       </div>
     </section>
 
-    <!-- Barra de Pesquisa Rápida e Clara -->
+    <!-- Barra de Pesquisa com Efeito Specular Card -->
     <section class="container mx-auto px-4 max-w-3xl">
-      <div class="bg-white p-4 sm:p-5 rounded-3xl border-2 border-primary/20 shadow-sm">
+      <SpecularCard>
         <label for="busca-home" class="block text-sm sm:text-base font-bold text-gray-800 mb-2">
           🔍 O que você gostaria de encontrar hoje?
         </label>
@@ -131,7 +132,7 @@ function scrollToProducts() {
             <span class="hidden sm:inline">Buscar</span>
           </button>
         </form>
-      </div>
+      </SpecularCard>
     </section>
 
 
