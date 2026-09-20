@@ -32,14 +32,6 @@ function handleSearch() {
   }
 }
 
-function scrollToProducts() {
-  const el = document.getElementById('vitrine-produtos');
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth' });
-  } else {
-    router.push('/catalog');
-  }
-}
 </script>
 
 <template>
@@ -63,34 +55,10 @@ function scrollToProducts() {
         </div>
 
         <!-- Título e Saudação -->
-        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-primary mb-6 sm:mb-8 leading-tight tracking-tight">
-          Olá! Seja bem-vinda à <br class="sm:hidden" />
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-primary mb-6 leading-tight tracking-tight">
+          Bem Vindos à <br class="sm:hidden" />
           <span class="text-primary underline decoration-primary/30">Loja da Preta</span> ❤️
         </h1>
-
-        <!-- Botões de Ação Principais (Grandes para o Celular) -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3.5 max-w-lg mx-auto">
-          <!-- Botão WhatsApp Grande -->
-          <a
-            :href="whatsappUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="h-14 sm:h-16 px-6 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-bold text-lg sm:text-xl shadow-lg shadow-green-600/25 flex items-center justify-center gap-3 transition-transform active:scale-98"
-          >
-            <MessageCircle class="h-7 w-7 flex-shrink-0" />
-            <span>Falar no WhatsApp</span>
-          </a>
-
-          <!-- Botão Ver Produtos Grande -->
-          <button
-            type="button"
-            @click="scrollToProducts"
-            class="h-14 sm:h-16 px-6 rounded-2xl bg-primary text-white hover:bg-primary/90 font-bold text-lg sm:text-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-3 transition-transform active:scale-98"
-          >
-            <span>Ver Nossos Produtos</span>
-            <ArrowRight class="h-6 w-6 flex-shrink-0" />
-          </button>
-        </div>
 
         <!-- Destaques de Confiança -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto mt-10 pt-6 border-t border-primary/10 text-xs sm:text-sm text-gray-700 font-semibold">
