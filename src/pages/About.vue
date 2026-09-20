@@ -1,18 +1,13 @@
 <script setup lang="ts">
 import {
   MessageCircle,
-  ArrowRight,
   Heart,
   ShieldCheck,
   Sparkles,
   PhoneCall,
-  Clock,
-  MapPin,
 } from 'lucide-vue-next';
 
 const logoUrl = import.meta.env.BASE_URL + 'logo.jpg';
-const whatsappUrl =
-  'https://api.whatsapp.com/send/?phone=5555999911746&text=Ol%C3%A1%21+Vim+pela+p%C3%A1gina+Sobre+a+Loja+e+gostaria+de+conversar.&type=phone_number&app_absent=0';
 </script>
 
 <template>
@@ -88,45 +83,6 @@ const whatsappUrl =
         <p class="text-sm text-gray-600 leading-relaxed">
           Cada produto e entrega é preparado com todo o carinho e dedicação especialmente para nossos clientes.
         </p>
-      </div>
-    </section>
-
-    <!-- Contato e Localização -->
-    <section class="bg-secondary/30 rounded-3xl p-6 sm:p-8 border border-primary/10 text-center space-y-6">
-      <h2 class="text-2xl font-bold text-primary">
-        Fale Conosco Sempre que Precisar
-      </h2>
-
-      <div class="flex flex-wrap justify-center gap-6 text-sm sm:text-base font-semibold text-gray-700">
-        <div class="flex items-center gap-2">
-          <MapPin class="h-5 w-5 text-primary flex-shrink-0" />
-          <span>São Gabriel - RS</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <Clock class="h-5 w-5 text-primary flex-shrink-0" />
-          <span>Atendimento Diário via WhatsApp</span>
-        </div>
-      </div>
-
-      <!-- Botões de Ação -->
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-        <a
-          :href="whatsappUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="w-full sm:w-auto h-14 px-8 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-bold text-lg shadow-md flex items-center justify-center gap-3 transition-transform active:scale-95"
-        >
-          <MessageCircle class="h-6 w-6 flex-shrink-0" />
-          <span>Chamar no WhatsApp</span>
-        </a>
-
-        <router-link
-          to="/catalog"
-          class="w-full sm:w-auto h-14 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-white font-bold text-lg shadow-md flex items-center justify-center gap-3 transition-transform active:scale-95"
-        >
-          <span>Ver Nossos Produtos</span>
-          <ArrowRight class="h-5 w-5 flex-shrink-0" />
-        </router-link>
       </div>
     </section>
   </div>
