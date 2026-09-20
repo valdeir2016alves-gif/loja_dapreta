@@ -171,7 +171,7 @@ function handleSearch() {
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-white p-6 rounded-3xl border border-primary/10 shadow-sm text-center">
+          <SpecularCard inner-class="p-6 text-center" :initial-angle="0">
             <div class="w-12 h-12 bg-primary/10 text-primary rounded-full font-black text-xl flex items-center justify-center mx-auto mb-4">
               1
             </div>
@@ -179,9 +179,9 @@ function handleSearch() {
             <p class="text-sm text-gray-600 leading-relaxed">
               Veja as fotos, preços e detalhes dos cosméticos e itens que você mais gostar.
             </p>
-          </div>
+          </SpecularCard>
 
-          <div class="bg-white p-6 rounded-3xl border border-primary/10 shadow-sm text-center">
+          <SpecularCard inner-class="p-6 text-center" :initial-angle="120">
             <div class="w-12 h-12 bg-green-100 text-green-700 rounded-full font-black text-xl flex items-center justify-center mx-auto mb-4">
               2
             </div>
@@ -189,9 +189,9 @@ function handleSearch() {
             <p class="text-sm text-gray-600 leading-relaxed">
               Clique no botão do WhatsApp em qualquer produto para tirar dúvidas ou fazer seu pedido.
             </p>
-          </div>
+          </SpecularCard>
 
-          <div class="bg-white p-6 rounded-3xl border border-primary/10 shadow-sm text-center">
+          <SpecularCard inner-class="p-6 text-center" :initial-angle="240">
             <div class="w-12 h-12 bg-primary/10 text-primary rounded-full font-black text-xl flex items-center justify-center mx-auto mb-4">
               3
             </div>
@@ -199,7 +199,7 @@ function handleSearch() {
             <p class="text-sm text-gray-600 leading-relaxed">
               Combinamos o melhor dia e forma de entrega diretamente com você em São Gabriel!
             </p>
-          </div>
+          </SpecularCard>
         </div>
 
       </div>

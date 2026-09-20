@@ -8,6 +8,8 @@ interface Props {
   primaryColor?: string;
   shineColor?: string;
   baseColor?: string;
+  innerClass?: string;
+  initialAngle?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -17,11 +19,13 @@ const props = withDefaults(defineProps<Props>(), {
   primaryColor: '#38bdf8', // Brilho specular celeste elegante
   shineColor: '#ffffff',   // Ponto máximo de reflexo branco
   baseColor: 'rgba(36, 59, 79, 0.18)', // Cor base da borda alinhada à paleta
+  innerClass: 'p-4 sm:p-5',
+  initialAngle: 0,
 });
 
 const containerRef = ref<HTMLElement | null>(null);
-const angle = ref(0);
-let targetAngle = 0;
+const angle = ref(props.initialAngle);
+let targetAngle = props.initialAngle;
 let isHovering = false;
 let rafId: number | null = null;
 
@@ -99,7 +103,10 @@ const gradientStyle = computed(() => {
     />
 
     <!-- Conteúdo do card protegido no topo com fundo sólido -->
-    <div class="relative z-10 bg-white p-4 sm:p-5 rounded-[22px] shadow-sm">
+    <div
+      class="relative z-10 bg-white rounded-[22px] shadow-sm flex flex-col h-full"
+      :class="innerClass"
+    >
       <slot />
     </div>
   </div>

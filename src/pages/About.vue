@@ -6,6 +6,7 @@ import {
   Sparkles,
   PhoneCall,
 } from 'lucide-vue-next';
+import SpecularCard from '@/components/ui/SpecularCard.vue';
 
 const logoUrl = import.meta.env.BASE_URL + 'logo.jpg';
 </script>
@@ -39,23 +40,25 @@ const logoUrl = import.meta.env.BASE_URL + 'logo.jpg';
     </header>
 
     <!-- Card Principal de Destaque com o Texto Oficial -->
-    <section class="bg-white rounded-3xl p-6 sm:p-10 border-2 border-primary/20 shadow-md text-center max-w-2xl mx-auto space-y-4">
-      <div class="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto mb-2">
-        <Heart class="h-7 w-7 text-rose-500 fill-rose-500/20" />
-      </div>
+    <section class="max-w-2xl mx-auto">
+      <SpecularCard inner-class="p-6 sm:p-10 text-center space-y-4 shadow-md">
+        <div class="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto mb-2">
+          <Heart class="h-7 w-7 text-rose-500 fill-rose-500/20" />
+        </div>
 
-      <blockquote class="text-xl sm:text-2xl font-bold text-gray-900 leading-relaxed">
-        “Trabalhamos com produtos de qualidade, oferecendo um atendimento rápido e de confiança para você.”
-      </blockquote>
+        <blockquote class="text-xl sm:text-2xl font-bold text-gray-900 leading-relaxed">
+          “Trabalhamos com produtos de qualidade, oferecendo um atendimento rápido e de confiança para você.”
+        </blockquote>
 
-      <p class="text-sm sm:text-base text-gray-600 font-medium pt-2 border-t border-gray-100">
-        Nosso compromisso é fazer você se sentir em casa, tirando todas as dúvidas com carinho e paciência.
-      </p>
+        <p class="text-sm sm:text-base text-gray-600 font-medium pt-2 border-t border-gray-100">
+          Nosso compromisso é fazer você se sentir em casa, tirando todas as dúvidas com carinho e paciência.
+        </p>
+      </SpecularCard>
     </section>
 
     <!-- Pilares de Confiança -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-white p-6 rounded-3xl border border-primary/15 shadow-sm text-center space-y-3">
+      <SpecularCard inner-class="p-6 text-center space-y-3" :initial-angle="0">
         <div class="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto">
           <ShieldCheck class="h-6 w-6 text-primary" />
         </div>
@@ -63,9 +66,9 @@ const logoUrl = import.meta.env.BASE_URL + 'logo.jpg';
         <p class="text-sm text-gray-600 leading-relaxed">
           Trabalhamos apenas com produtos originais e selecionados das melhores marcas de cosméticos e utilidades.
         </p>
-      </div>
+      </SpecularCard>
 
-      <div class="bg-white p-6 rounded-3xl border border-primary/15 shadow-sm text-center space-y-3">
+      <SpecularCard inner-class="p-6 text-center space-y-3" :initial-angle="120">
         <div class="w-12 h-12 bg-green-100 text-green-700 rounded-2xl flex items-center justify-center mx-auto">
           <PhoneCall class="h-6 w-6 text-green-700" />
         </div>
@@ -73,9 +76,9 @@ const logoUrl = import.meta.env.BASE_URL + 'logo.jpg';
         <p class="text-sm text-gray-600 leading-relaxed">
           Sem robôs ou mensagens automáticas difíceis. Você fala diretamente conosco no WhatsApp de forma rápida e segura.
         </p>
-      </div>
+      </SpecularCard>
 
-      <div class="bg-white p-6 rounded-3xl border border-primary/15 shadow-sm text-center space-y-3">
+      <SpecularCard inner-class="p-6 text-center space-y-3" :initial-angle="240">
         <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center mx-auto">
           <Sparkles class="h-6 w-6 text-amber-700" />
         </div>
@@ -83,7 +86,7 @@ const logoUrl = import.meta.env.BASE_URL + 'logo.jpg';
         <p class="text-sm text-gray-600 leading-relaxed">
           Cada produto e entrega é preparado com todo o carinho e dedicação especialmente para nossos clientes.
         </p>
-      </div>
+      </SpecularCard>
     </section>
   </div>
 </template>
