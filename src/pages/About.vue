@@ -5,10 +5,15 @@ import {
   ShieldCheck,
   Sparkles,
   PhoneCall,
+  CheckCircle2,
+  BookOpen,
 } from 'lucide-vue-next';
 import SpecularCard from '@/components/ui/SpecularCard.vue';
+import AvonLogo from '@/components/icons/AvonLogo.vue';
 
 const logoUrl = import.meta.env.BASE_URL + 'logo.jpg';
+const whatsappUrl =
+  'https://api.whatsapp.com/send/?phone=5555999911746&text=Ol%C3%A1%21+Vim+pela+p%C3%A1gina+Sobre+a+Loja+e+gostaria+de+fazer+um+pedido+Avon.&type=phone_number&app_absent=0';
 </script>
 
 <template>
@@ -53,6 +58,53 @@ const logoUrl = import.meta.env.BASE_URL + 'logo.jpg';
         <p class="text-sm sm:text-base text-gray-600 font-medium pt-2 border-t border-gray-100">
           Nosso compromisso é fazer você se sentir em casa, tirando todas as dúvidas com carinho e paciência.
         </p>
+      </SpecularCard>
+    </section>
+
+    <!-- Card Consultora Avon Oficial -->
+    <section class="max-w-2xl mx-auto">
+      <SpecularCard
+        inner-class="p-6 sm:p-8 text-center space-y-4 shadow-md bg-gradient-to-b from-rose-50/40 via-white to-white"
+        primary-color="#ff2469"
+      >
+        <div class="flex justify-center mb-1">
+          <div class="h-10 sm:h-12 w-36 sm:w-44 flex items-center justify-center">
+            <AvonLogo class="h-full w-auto" />
+          </div>
+        </div>
+
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-[#ff2469] font-bold text-xs sm:text-sm tracking-wide">
+          <CheckCircle2 class="h-4 w-4" />
+          <span>Consultora Oficial Avon</span>
+        </div>
+
+        <h2 class="text-xl sm:text-2xl font-black text-gray-900 leading-tight">
+          Maria Iara (Preta) é Consultora Avon
+        </h2>
+
+        <p class="text-sm sm:text-base text-gray-600 leading-relaxed max-w-xl mx-auto font-medium">
+          Compre maquiagens, perfumaria, cuidados diários e produtos Avon 100% originais com quem tem experiência e oferece consultoria personalizada com todo o carinho e dedicação em São Gabriel - RS.
+        </p>
+
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            :href="whatsappUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-full sm:w-auto h-12 sm:h-13 px-6 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-bold text-base shadow-sm flex items-center justify-center gap-2 transition-transform active:scale-95"
+          >
+            <MessageCircle class="h-5 w-5 flex-shrink-0" />
+            <span>Fazer Pedido no WhatsApp</span>
+          </a>
+
+          <router-link
+            to="/catalog?cat=Kits%20Promocionais"
+            class="w-full sm:w-auto h-12 sm:h-13 px-6 rounded-2xl border-2 border-primary/20 hover:bg-primary/5 text-primary font-bold text-base flex items-center justify-center gap-2 transition-colors"
+          >
+            <BookOpen class="h-5 w-5 flex-shrink-0" />
+            <span>Ver Revista Avon</span>
+          </router-link>
+        </div>
       </SpecularCard>
     </section>
 
