@@ -51,12 +51,12 @@ function handleClear() {
 </script>
 
 <template>
-  <!-- Floating Button -->
-  <div class="fixed bottom-6 right-6 z-40">
+  <!-- Floating Button (apenas desktop; no celular o carrinho fica na barra fixa inferior) -->
+  <div class="hidden md:block fixed bottom-6 right-6 z-40">
     <button
       type="button"
       @click="handleOpen"
-      class="relative h-16 w-16 rounded-full bg-primary text-white shadow-xl hover:bg-primary/90 hover:scale-105 transition-all duration-300 flex items-center justify-center"
+      class="relative h-16 w-16 rounded-full bg-primary text-white shadow-xl hover:bg-primary/90 hover:scale-105 transition-all duration-300 flex items-center justify-center cursor-pointer"
       title="Abrir carrinho"
     >
       <ShoppingBag class="h-7 w-7" />
@@ -130,31 +130,34 @@ function handleClear() {
                 </template>
               </p>
             </div>
-            <div class="flex items-center justify-between mt-2">
-              <div class="flex items-center bg-white rounded-lg border border-primary/20">
+            <div class="flex items-center justify-between mt-3">
+              <div class="flex items-center bg-white rounded-xl border-2 border-primary/20 shadow-2xs">
                 <button
                   type="button"
-                  class="h-7 w-7 text-primary hover:bg-primary/10 rounded-l-lg flex items-center justify-center transition-colors"
+                  class="h-10 w-10 text-primary hover:bg-primary/10 rounded-l-xl flex items-center justify-center transition-colors active:scale-90"
                   @click="handleQuantity(item.product.id, item.quantity - 1)"
+                  aria-label="Diminuir quantidade"
                 >
-                  <Minus class="h-3 w-3" />
+                  <Minus class="h-4 w-4" />
                 </button>
-                <span class="w-8 text-center text-sm font-bold">{{ item.quantity }}</span>
+                <span class="w-10 text-center text-base font-black text-gray-900">{{ item.quantity }}</span>
                 <button
                   type="button"
-                  class="h-7 w-7 text-primary hover:bg-primary/10 rounded-r-lg flex items-center justify-center transition-colors"
+                  class="h-10 w-10 text-primary hover:bg-primary/10 rounded-r-xl flex items-center justify-center transition-colors active:scale-90"
                   @click="handleQuantity(item.product.id, item.quantity + 1)"
+                  aria-label="Aumentar quantidade"
                 >
-                  <Plus class="h-3 w-3" />
+                  <Plus class="h-4 w-4" />
                 </button>
               </div>
               <button
                 type="button"
-                class="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive rounded-lg flex items-center justify-center transition-colors"
+                class="h-10 w-10 text-destructive hover:bg-destructive/10 rounded-xl flex items-center justify-center transition-colors active:scale-90"
                 @click="handleRemove(item.product.id)"
                 title="Remover produto"
+                aria-label="Remover produto do carrinho"
               >
-                <Trash2 class="h-4 w-4" />
+                <Trash2 class="h-5 w-5" />
               </button>
             </div>
           </div>
@@ -163,9 +166,9 @@ function handleClear() {
 
       <!-- Footer / Checkout -->
       <div v-if="items.length > 0" class="pt-4 border-t mt-auto">
-        <div class="flex justify-between items-center mb-4">
-          <span class="text-lg font-bold text-muted-foreground">Total:</span>
-          <span class="text-2xl font-bold text-primary">
+        <div class="flex justify-between items-baseline mb-4">
+          <span class="text-base sm:text-lg font-extrabold text-gray-700">Total:</span>
+          <span class="text-2xl sm:text-3xl font-black text-primary">
             R$ {{ totalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}
           </span>
         </div>
@@ -174,14 +177,15 @@ function handleClear() {
             :href="whatsappUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="w-full h-14 bg-green-600 hover:bg-green-700 text-white text-lg font-semibold rounded-xl shadow-lg shadow-green-600/20 flex items-center justify-center transition-colors"
+            class="w-full h-14 sm:h-15 bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white text-lg font-black rounded-2xl shadow-lg shadow-green-600/20 flex items-center justify-center gap-2 transition-all"
           >
-            Finalizar no WhatsApp
+            <MessageCircle class="h-6 w-6" />
+            <span>Finalizar no WhatsApp</span>
           </a>
           <button
             type="button"
             @click="handleClear"
-            class="w-full h-12 text-destructive border border-destructive hover:bg-destructive/10 rounded-xl font-medium transition-colors"
+            class="w-full h-11 text-destructive hover:bg-destructive/10 rounded-xl font-bold text-sm transition-colors"
           >
             Esvaziar Carrinho
           </button>

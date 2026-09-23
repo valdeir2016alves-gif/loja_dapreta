@@ -70,32 +70,32 @@ const filteredProducts = computed(() => {
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-12">
+  <div class="container mx-auto px-4 py-6 sm:py-12">
     <!-- Header -->
-    <div class="mb-10">
-      <h1 class="text-4xl md:text-5xl font-bold text-primary mb-3">Nossos Produtos</h1>
-      <p class="text-muted-foreground">Encontre cosméticos, maquiagens e produtos ideais para você.</p>
+    <div class="mb-6 sm:mb-8">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-primary mb-2">Nossos Produtos</h1>
+      <p class="text-sm sm:text-base text-gray-700 font-medium">Encontre cosméticos, maquiagens, revistas Avon e produtos ideais para você.</p>
     </div>
 
     <!-- Filters & Search Bar -->
-    <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between mb-8">
+    <div class="flex flex-col md:flex-row gap-3.5 items-stretch md:items-center justify-between mb-6">
       <!-- Search Input -->
       <div class="relative flex-1 max-w-md">
-        <Search class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+        <Search class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
         <input
           v-model="search"
           type="text"
-          placeholder="Buscar produtos..."
-          class="w-full pl-11 pr-4 py-3 rounded-2xl border border-primary/20 bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm shadow-sm"
+          placeholder="Buscar produtos ou revistas..."
+          class="w-full pl-12 pr-4 py-3.5 rounded-2xl border-2 border-primary/20 bg-white focus:outline-none focus:ring-2 focus:ring-primary/40 text-base shadow-sm font-medium"
         />
       </div>
 
       <!-- Sort Dropdown -->
-      <div class="flex items-center gap-3">
-        <label class="text-xs text-muted-foreground font-semibold whitespace-nowrap">Ordenar por:</label>
+      <div class="flex items-center gap-2.5">
+        <label class="text-xs sm:text-sm text-gray-700 font-bold whitespace-nowrap">Ordenar por:</label>
         <select
           v-model="sortBy"
-          class="py-3 px-4 rounded-2xl border border-primary/20 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 shadow-sm cursor-pointer"
+          class="py-3 px-4 rounded-2xl border-2 border-primary/20 bg-white text-sm sm:text-base font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm cursor-pointer"
         >
           <option value="alphabetical">Nome (A - Z)</option>
           <option value="price-asc">Menor Preço</option>
@@ -105,25 +105,25 @@ const filteredProducts = computed(() => {
     </div>
 
     <!-- Category Pills -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
+    <div class="flex items-center gap-2.5 overflow-x-auto pb-4 mb-6 scrollbar-none py-1">
       <button
         v-for="cat in categories"
         :key="cat"
         type="button"
         @click="selectedCategory = cat"
-        class="px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200"
+        class="px-5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-black whitespace-nowrap transition-all duration-200 active:scale-95 shadow-2xs"
         :class="
           selectedCategory === cat
-            ? 'bg-primary text-white shadow-md'
-            : 'bg-white text-muted-foreground hover:bg-secondary/40 border border-primary/15'
+            ? 'bg-primary text-white shadow-md border-2 border-primary'
+            : 'bg-white text-gray-850 hover:bg-secondary/40 border-2 border-primary/15'
         "
       >
-        {{ cat === 'All' ? 'Todos' : cat }}
+        {{ cat === 'All' ? '✨ Todos' : cat }}
       </button>
     </div>
 
     <!-- Counter -->
-    <div class="mb-6 text-xs text-muted-foreground font-medium">
+    <div class="mb-5 text-xs sm:text-sm text-gray-700 font-bold">
       Mostrando {{ filteredProducts.length }} de {{ allProducts.length }} produtos
     </div>
 

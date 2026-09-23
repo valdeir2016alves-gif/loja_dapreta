@@ -27,20 +27,20 @@ function handleOpenCart() {
       <router-link
         to="/"
         class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-colors"
-        :class="route.path === '/' ? 'text-primary font-bold' : 'text-gray-500 font-medium'"
+        :class="route.path === '/' ? 'text-primary font-black' : 'text-gray-700 font-bold hover:text-primary'"
       >
-        <Home class="h-6 w-6" />
-        <span class="text-xs mt-1">Início</span>
+        <Home class="h-6 w-6 stroke-[2.2]" />
+        <span class="text-xs mt-0.5">Início</span>
       </router-link>
 
       <!-- Catálogo / Produtos -->
       <router-link
         to="/catalog"
         class="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-colors"
-        :class="route.path === '/catalog' ? 'text-primary font-bold' : 'text-gray-500 font-medium'"
+        :class="route.path === '/catalog' ? 'text-primary font-black' : 'text-gray-700 font-bold hover:text-primary'"
       >
-        <ShoppingBag class="h-6 w-6" />
-        <span class="text-xs mt-1">Produtos</span>
+        <ShoppingBag class="h-6 w-6 stroke-[2.2]" />
+        <span class="text-xs mt-0.5">Produtos</span>
       </router-link>
 
       <!-- WhatsApp Destaque Central -->
@@ -48,38 +48,38 @@ function handleOpenCart() {
         :href="whatsappUrl"
         target="_blank"
         rel="noopener noreferrer"
-        class="flex flex-col items-center justify-center -mt-5"
+        class="flex flex-col items-center justify-center -mt-6"
         title="Falar no WhatsApp"
       >
         <div
-          class="h-14 w-14 rounded-full bg-green-600 text-white shadow-lg flex items-center justify-center hover:bg-green-700 active:scale-95 transition-all border-4 border-white"
+          class="h-15 w-15 rounded-full bg-green-600 text-white shadow-xl flex items-center justify-center hover:bg-green-700 active:scale-95 transition-all border-4 border-white"
         >
-          <MessageCircle class="h-7 w-7" />
+          <MessageCircle class="h-8 w-8" />
         </div>
-        <span class="text-[11px] font-bold text-green-700 mt-0.5">WhatsApp</span>
+        <span class="text-xs font-black text-green-700 mt-0.5">WhatsApp</span>
       </a>
 
       <!-- Sobre a Loja -->
       <router-link
         to="/about"
         class="flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-colors"
-        :class="route.path === '/about' ? 'text-primary font-bold' : 'text-gray-500 font-medium'"
+        :class="route.path === '/about' ? 'text-primary font-black' : 'text-gray-700 font-bold hover:text-primary'"
       >
-        <Info class="h-6 w-6" />
-        <span class="text-xs mt-1">Sobre</span>
+        <Info class="h-6 w-6 stroke-[2.2]" />
+        <span class="text-xs mt-0.5">Sobre</span>
       </router-link>
 
       <!-- Carrinho -->
       <button
         type="button"
         @click="handleOpenCart"
-        class="relative flex flex-col items-center justify-center py-1 px-3 rounded-xl text-gray-500 font-medium transition-colors hover:text-primary"
+        class="relative flex flex-col items-center justify-center py-1 px-3 rounded-xl text-gray-700 font-bold transition-colors hover:text-primary active:scale-95 cursor-pointer"
       >
-        <ShoppingCart class="h-6 w-6" />
-        <span class="text-xs mt-1">Carrinho</span>
+        <ShoppingCart class="h-6 w-6 stroke-[2.2]" />
+        <span class="text-xs mt-0.5">Carrinho</span>
         <span
           v-if="cartCount > 0"
-          class="absolute top-0 right-2 bg-red-500 text-white text-[11px] font-extrabold h-5 w-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm"
+          class="absolute -top-1 right-2 bg-red-500 text-white text-[11px] font-black h-5 w-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm"
         >
           {{ cartCount }}
         </span>

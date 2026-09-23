@@ -82,10 +82,10 @@ function handleViewDetails() {
 
       <!-- Informações -->
       <div class="p-4 sm:p-5">
-        <h3 class="font-bold text-lg text-gray-900 mb-1.5 line-clamp-2 leading-snug group-hover:text-primary transition-colors">
+        <h3 class="font-extrabold text-lg sm:text-xl text-gray-900 mb-2 line-clamp-2 leading-snug group-hover:text-primary transition-colors">
           {{ product.name }}
         </h3>
-        <p class="text-gray-600 text-xs sm:text-sm line-clamp-2 mb-3 leading-relaxed">
+        <p class="text-gray-700 text-sm line-clamp-2 mb-3 leading-relaxed font-normal">
           {{ product.shortDescription }}
         </p>
         <div class="flex items-baseline justify-between pt-1">
@@ -93,7 +93,7 @@ function handleViewDetails() {
             R$ {{ product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}
           </span>
           <div v-else class="flex flex-col">
-            <span class="text-[11px] font-extrabold text-muted-foreground uppercase tracking-wider">Sob Encomenda</span>
+            <span class="text-xs font-black text-muted-foreground uppercase tracking-wider">Sob Encomenda</span>
             <span class="text-xl sm:text-2xl font-black text-rose-600 tracking-tight">
               Catálogo Virtual
             </span>
@@ -102,13 +102,13 @@ function handleViewDetails() {
       </div>
     </div>
 
-    <!-- Botões de Ação Grandes e Confortáveis -->
-    <div class="p-4 sm:p-5 pt-0 flex flex-col gap-2">
-      <div class="flex gap-2">
+    <!-- Botões de Ação Grandes e Confortáveis (Otimizados para Toque e Idosos) -->
+    <div class="p-4 sm:p-5 pt-0 flex flex-col gap-2.5">
+      <div class="flex gap-2.5">
         <button
           type="button"
           @click.stop="handleViewDetails"
-          class="flex-1 h-12 px-3 text-sm font-bold rounded-2xl border-2 border-primary/20 text-primary hover:bg-primary/10 transition-colors text-center flex items-center justify-center"
+          class="flex-1 h-13 px-4 text-base font-extrabold rounded-2xl border-2 border-primary/25 text-primary hover:bg-primary/10 active:scale-[0.98] transition-all text-center flex items-center justify-center"
         >
           {{ isRevista ? 'Ver Revista' : 'Ver Detalhes' }}
         </button>
@@ -116,23 +116,23 @@ function handleViewDetails() {
         <button
           type="button"
           @click="handleAddToCart"
-          class="bg-primary text-white hover:bg-primary/90 h-12 w-12 flex items-center justify-center rounded-2xl shadow-sm transition-transform active:scale-95 flex-shrink-0"
+          class="bg-primary text-white hover:bg-primary/90 h-13 w-13 flex items-center justify-center rounded-2xl shadow-sm transition-transform active:scale-95 flex-shrink-0"
           :title="isRevista ? 'Adicionar ao carrinho para encomendar' : 'Colocar no carrinho'"
         >
-          <ShoppingCart class="h-5 w-5" />
+          <ShoppingCart class="h-6 w-6" />
         </button>
       </div>
 
-      <!-- Botão Rápido de WhatsApp no Card -->
+      <!-- Botão Rápido de WhatsApp no Card (Verde Sólido, Alto Contraste) -->
       <a
         :href="whatsappUrl"
         target="_blank"
         rel="noopener noreferrer"
         @click.stop
-        class="w-full h-11 rounded-2xl bg-green-50 hover:bg-green-100 text-green-700 border border-green-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-colors"
+        class="w-full h-13 rounded-2xl bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-sm transition-all"
       >
-        <MessageCircle class="h-4 w-4 text-green-600" />
-        <span>{{ isRevista ? 'Pedir da Revista no WhatsApp' : 'Pedir pelo WhatsApp' }}</span>
+        <MessageCircle class="h-5 w-5 flex-shrink-0" />
+        <span>{{ isRevista ? 'Pedir Revista no WhatsApp' : 'Pedir pelo WhatsApp' }}</span>
       </a>
     </div>
   </div>
