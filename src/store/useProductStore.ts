@@ -4,6 +4,7 @@ import type { Product } from '@/types/product';
 import { initialProducts } from '@/data/initialData';
 
 const defaultCategories = [
+  "Revistas Avon",
   "Maquiagem",
   "Skincare",
   "Perfumes",
@@ -31,9 +32,17 @@ function loadInitialData(): { products: Product[]; categories: string[] } {
 
       let finalProducts = initialProducts;
       if (savedProducts.length > 0) {
+        const initialMap = new Map(initialProducts.map((p) => [p.id, p]));
+        const updatedSaved = savedProducts.map((p) => {
+          const init = initialMap.get(p.id);
+          if (init) {
+            return { ...p, ...init };
+          }
+          return p;
+        });
         const savedIds = new Set(savedProducts.map((p) => p.id));
         const missingInitial = initialProducts.filter((p) => !savedIds.has(p.id));
-        finalProducts = [...savedProducts, ...missingInitial];
+        finalProducts = [...updatedSaved, ...missingInitial];
       }
 
       const finalCategories = Array.from(new Set([...defaultCategories, ...savedCategories]));

@@ -9,6 +9,8 @@ export interface Product {
   shortDescription: string;
   fullDescription: string;
   isFeatured?: boolean;
+  catalogUrl?: string;
+  pdfUrl?: string;
 }
 
 export type SortOption = "price-asc" | "price-desc" | "alphabetical";

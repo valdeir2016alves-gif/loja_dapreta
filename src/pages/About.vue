@@ -7,9 +7,11 @@ import {
   PhoneCall,
   CheckCircle2,
   BookOpen,
+  ArrowRight,
 } from 'lucide-vue-next';
 import SpecularCard from '@/components/ui/SpecularCard.vue';
 import AvonLogo from '@/components/icons/AvonLogo.vue';
+import { formatImageUrl } from '@/lib/utils';
 
 const logoUrl = import.meta.env.BASE_URL + 'logo.jpg';
 const whatsappUrl =
@@ -98,11 +100,42 @@ const whatsappUrl =
           </a>
 
           <router-link
-            to="/catalog?cat=Kits%20Promocionais"
+            to="/catalog?cat=Revistas%20Avon"
             class="w-full sm:w-auto h-12 sm:h-13 px-6 rounded-2xl border-2 border-primary/20 hover:bg-primary/5 text-primary font-bold text-base flex items-center justify-center gap-2 transition-colors"
           >
             <BookOpen class="h-5 w-5 flex-shrink-0" />
-            <span>Ver Revista Avon</span>
+            <span>Ver Revistas no Catálogo</span>
+          </router-link>
+        </div>
+
+        <!-- Links Rápidos Diretos para as Revistas -->
+        <div class="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto text-left">
+          <router-link
+            to="/product/revista-avon-ciclo-16"
+            class="p-3 rounded-2xl bg-white hover:bg-rose-50/60 border border-primary/15 flex items-center gap-3 transition-all shadow-xs group"
+          >
+            <div class="w-12 h-12 rounded-xl overflow-hidden bg-secondary/20 flex-shrink-0 border border-primary/10">
+              <img :src="formatImageUrl('produtos/revista-avon-cosmeticos-16.jpg')" alt="Revista Cosméticos" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="block text-xs sm:text-sm font-bold text-gray-900 group-hover:text-primary truncate">Revista Cosméticos</span>
+              <span class="block text-[11px] text-[#ff2469] font-extrabold uppercase">Ciclo 16 / 2026</span>
+            </div>
+            <ArrowRight class="h-4 w-4 text-gray-400 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+          </router-link>
+
+          <router-link
+            to="/product/revista-avon-casa-estilo-15-16"
+            class="p-3 rounded-2xl bg-white hover:bg-rose-50/60 border border-primary/15 flex items-center gap-3 transition-all shadow-xs group"
+          >
+            <div class="w-12 h-12 rounded-xl overflow-hidden bg-secondary/20 flex-shrink-0 border border-primary/10">
+              <img :src="formatImageUrl('produtos/revista-avon-casa-estilo-15-16.jpg')" alt="Revista Casa & Estilo" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="block text-xs sm:text-sm font-bold text-gray-900 group-hover:text-primary truncate">Revista Casa & Estilo</span>
+              <span class="block text-[11px] text-[#ff2469] font-extrabold uppercase">Ciclos 15 e 16</span>
+            </div>
+            <ArrowRight class="h-4 w-4 text-gray-400 group-hover:text-primary group-hover:translate-x-1 transition-all" />
           </router-link>
         </div>
       </SpecularCard>
