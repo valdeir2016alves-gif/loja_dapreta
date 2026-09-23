@@ -15,6 +15,12 @@ const defaultCategories = [
 
 const STORAGE_KEY = 'bella-glow-products';
 
+function prioritizeRevistas(list: Product[]): Product[] {
+  const revistas = list.filter((p) => p.name.toLowerCase().includes('revista'));
+  const others = list.filter((p) => !p.name.toLowerCase().includes('revista'));
+  return [...revistas, ...others];
+}
+
 function loadInitialData(): { products: Product[]; categories: string[] } {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -33,14 +39,14 @@ function loadInitialData(): { products: Product[]; categories: string[] } {
       const finalCategories = Array.from(new Set([...defaultCategories, ...savedCategories]));
 
       return {
-        products: finalProducts,
+        products: prioritizeRevistas(finalProducts),
         categories: finalCategories,
       };
     }
   } catch (err) {
     console.error('Erro ao ler localStorage de produtos:', err);
   }
-  return { products: initialProducts, categories: defaultCategories };
+  return { products: prioritizeRevistas(initialProducts), categories: defaultCategories };
 }
 
 export const useProductStore = defineStore('product', () => {

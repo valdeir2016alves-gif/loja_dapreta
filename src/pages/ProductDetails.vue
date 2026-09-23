@@ -17,8 +17,16 @@ const product = computed(() => {
   return productStore.getProductById(id);
 });
 
+const isRevista = computed(() => !!product.value?.name.toLowerCase().includes('revista'));
+
 const whatsappUrl = computed(() => {
   if (!product.value) return '#';
+  if (isRevista.value || product.value.price === 0) {
+    const msg = encodeURIComponent(
+      `Olá Loja da Preta! Gostaria de consultar ou fazer um pedido através da ${product.value.name}.`
+    );
+    return `https://wa.me/5555999911746?text=${msg}`;
+  }
   const priceFormatted = product.value.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
   const msg = encodeURIComponent(
     `Olá Loja da Preta! Tenho interesse no produto: ${product.value.name} (R$ ${priceFormatted}).`
@@ -74,9 +82,15 @@ function handleAddToCart() {
             {{ product.name }}
           </h1>
 
-          <p class="text-3xl font-bold text-primary mb-6">
-            R$ {{ product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}
-          </p>
+          <div class="mb-6">
+            <p v-if="product.price > 0" class="text-3xl font-bold text-primary">
+              R$ {{ product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}
+            </p>
+            <div v-else class="inline-flex flex-col">
+              <span class="text-xs font-bold text-muted-foreground uppercase tracking-wider">Disponível Sob Encomenda</span>
+              <span class="text-2xl sm:text-3xl font-black text-rose-600">Catálogo Virtual Completo</span>
+            </div>
+          </div>
 
           <div class="prose prose-pink mb-8">
             <p class="text-muted-foreground text-lg leading-relaxed whitespace-pre-line">
@@ -90,7 +104,7 @@ function handleAddToCart() {
               @click="handleAddToCart"
               class="flex-1 h-14 bg-primary text-white hover:bg-primary/90 text-lg font-semibold rounded-2xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transition-all"
             >
-              <ShoppingBag class="h-5 w-5" /> Adicionar ao Carrinho
+              <ShoppingBag class="h-5 w-5" /> {{ isRevista ? 'Encomendar no Carrinho' : 'Adicionar ao Carrinho' }}
             </button>
             <a
               :href="whatsappUrl"
@@ -98,7 +112,7 @@ function handleAddToCart() {
               rel="noopener noreferrer"
               class="flex-1 h-14 border border-primary/20 text-primary hover:bg-primary/5 text-lg font-semibold rounded-2xl flex items-center justify-center gap-2 transition-colors"
             >
-              <MessageCircle class="h-5 w-5" /> Contato WhatsApp
+              <MessageCircle class="h-5 w-5" /> {{ isRevista ? 'Pedir Revista no WhatsApp' : 'Contato WhatsApp' }}
             </a>
           </div>
         </div>

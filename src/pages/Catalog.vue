@@ -50,13 +50,20 @@ const filteredProducts = computed(() => {
     return matchesSearch && matchesCat;
   });
 
-  if (sortBy.value === 'price-asc') {
-    result.sort((a, b) => a.price - b.price);
-  } else if (sortBy.value === 'price-desc') {
-    result.sort((a, b) => b.price - a.price);
-  } else if (sortBy.value === 'alphabetical') {
-    result.sort((a, b) => a.name.localeCompare(b.name));
-  }
+  result.sort((a, b) => {
+    const aRevista = a.name.toLowerCase().includes('revista');
+    const bRevista = b.name.toLowerCase().includes('revista');
+    if (aRevista && !bRevista) return -1;
+    if (!aRevista && bRevista) return 1;
+
+    if (sortBy.value === 'price-asc') {
+      return a.price - b.price;
+    } else if (sortBy.value === 'price-desc') {
+      return b.price - a.price;
+    } else {
+      return a.name.localeCompare(b.name);
+    }
+  });
 
   return result;
 });

@@ -2,6 +2,16 @@ import { type Product } from '../types/product';
 
 export const initialProducts: Product[] = [
   {
+    id: 'revista-avon-ciclo-16',
+    name: 'Revista Avon - Pedidos por Encomenda',
+    category: 'Kits Promocionais',
+    price: 0.00,
+    image: 'produtos/revista-avon-ciclo-16.jpg',
+    shortDescription: 'Consulte o catálogo virtual completo e encomende seus produtos.',
+    fullDescription: 'Acesse todas as ofertas, perfumes, maquiagens e lançamentos da revista Avon ciclo atual. Escolha seus produtos e envie o pedido diretamente pelo nosso WhatsApp para garantirmos a entrega!',
+    isFeatured: true,
+  },
+  {
     id: 'jarra-eletrica',
     name: 'Jarra Elétrica Inox',
     category: 'Casa',
@@ -69,16 +79,6 @@ export const initialProducts: Product[] = [
     image: 'produtos/corton-preto-2-0.jpg',
     shortDescription: 'Alta potência e acabamento perfeito para cuidar dos seus cabelos.',
     fullDescription: 'Aparelho Corton Preto 2.0 com tecnologia de aquecimento rápido e design ergonômico. Ideal para secar, modelar e finalizar seus cabelos com brilho e facilidade no dia a dia.',
-    isFeatured: true,
-  },
-  {
-    id: 'revista-avon-ciclo-16',
-    name: 'Revista Avon - Pedidos por Encomenda',
-    category: 'Kits Promocionais',
-    price: 0.00,
-    image: 'produtos/revista-avon-ciclo-16.jpg',
-    shortDescription: 'Consulte o catálogo virtual completo e encomende seus produtos.',
-    fullDescription: 'Acesse todas as ofertas, perfumes, maquiagens e lançamentos da revista Avon ciclo atual. Escolha seus produtos e envie o pedido diretamente pelo nosso WhatsApp para garantirmos a entrega!',
     isFeatured: true,
   },
 ];

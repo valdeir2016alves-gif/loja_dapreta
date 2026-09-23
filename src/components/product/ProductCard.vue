@@ -14,7 +14,15 @@ const router = useRouter();
 const cartStore = useCartStore();
 const isLoaded = ref(false);
 
+const isRevista = computed(() => props.product.name.toLowerCase().includes('revista'));
+
 const whatsappUrl = computed(() => {
+  if (isRevista.value || props.product.price === 0) {
+    const msg = encodeURIComponent(
+      `Olá Loja da Preta! Gostaria de consultar ou fazer um pedido através da ${props.product.name}.`
+    );
+    return `https://wa.me/5555999911746?text=${msg}`;
+  }
   const priceFormatted = props.product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
   const msg = encodeURIComponent(
     `Olá Loja da Preta! Gostaria de pedir o produto: ${props.product.name} (R$ ${priceFormatted}).`
@@ -56,12 +64,20 @@ function handleViewDetails() {
           <span class="text-xs text-muted-foreground font-medium">Carregando foto...</span>
         </div>
 
-        <!-- Categoria em destaque -->
-        <span
-          class="absolute top-3 left-3 bg-white/95 text-primary text-xs uppercase font-extrabold py-1 px-2.5 rounded-lg shadow-sm border border-primary/10 tracking-wider"
-        >
-          {{ product.category }}
-        </span>
+        <!-- Categoria e Destaque -->
+        <div class="absolute top-3 left-3 flex flex-col gap-1.5 z-10 items-start">
+          <span
+            v-if="isRevista"
+            class="bg-rose-600 text-white text-[11px] sm:text-xs uppercase font-extrabold py-1 px-2.5 rounded-lg shadow-md tracking-wider flex items-center gap-1"
+          >
+            ⭐ Destaque Revista
+          </span>
+          <span
+            class="bg-white/95 text-primary text-xs uppercase font-extrabold py-1 px-2.5 rounded-lg shadow-sm border border-primary/10 tracking-wider"
+          >
+            {{ product.category }}
+          </span>
+        </div>
       </div>
 
       <!-- Informações -->
@@ -73,9 +89,15 @@ function handleViewDetails() {
           {{ product.shortDescription }}
         </p>
         <div class="flex items-baseline justify-between pt-1">
-          <span class="text-2xl sm:text-3xl font-black text-primary tracking-tight">
+          <span v-if="product.price > 0" class="text-2xl sm:text-3xl font-black text-primary tracking-tight">
             R$ {{ product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}
           </span>
+          <div v-else class="flex flex-col">
+            <span class="text-[11px] font-extrabold text-muted-foreground uppercase tracking-wider">Sob Encomenda</span>
+            <span class="text-xl sm:text-2xl font-black text-rose-600 tracking-tight">
+              Catálogo Virtual
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -88,14 +110,14 @@ function handleViewDetails() {
           @click.stop="handleViewDetails"
           class="flex-1 h-12 px-3 text-sm font-bold rounded-2xl border-2 border-primary/20 text-primary hover:bg-primary/10 transition-colors text-center flex items-center justify-center"
         >
-          Ver Detalhes
+          {{ isRevista ? 'Ver Revista' : 'Ver Detalhes' }}
         </button>
 
         <button
           type="button"
           @click="handleAddToCart"
           class="bg-primary text-white hover:bg-primary/90 h-12 w-12 flex items-center justify-center rounded-2xl shadow-sm transition-transform active:scale-95 flex-shrink-0"
-          title="Colocar no carrinho"
+          :title="isRevista ? 'Adicionar ao carrinho para encomendar' : 'Colocar no carrinho'"
         >
           <ShoppingCart class="h-5 w-5" />
         </button>
@@ -110,7 +132,7 @@ function handleViewDetails() {
         class="w-full h-11 rounded-2xl bg-green-50 hover:bg-green-100 text-green-700 border border-green-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-colors"
       >
         <MessageCircle class="h-4 w-4 text-green-600" />
-        <span>Pedir pelo WhatsApp</span>
+        <span>{{ isRevista ? 'Pedir da Revista no WhatsApp' : 'Pedir pelo WhatsApp' }}</span>
       </a>
     </div>
   </div>

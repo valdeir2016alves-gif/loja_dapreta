@@ -13,10 +13,13 @@ const totalPrice = computed(() => cartStore.totalPrice);
 
 const whatsappUrl = computed(() => {
   const itemsText = items.value
-    .map(
-      (item) =>
-        `- ${item.quantity}x ${item.product.name} (R$ ${item.product.price.toFixed(2)})`
-    )
+    .map((item) => {
+      const priceStr =
+        item.product.price > 0
+          ? `(R$ ${item.product.price.toFixed(2)})`
+          : `(Sob Encomenda)`;
+      return `- ${item.quantity}x ${item.product.name} ${priceStr}`;
+    })
     .join('\n');
   const message = encodeURIComponent(
     `Olá Loja da Preta! Gostaria de finalizar o meu pedido:\n\n${itemsText}\n\n*Total: R$ ${totalPrice.value.toFixed(2)}*`
@@ -118,8 +121,13 @@ function handleClear() {
           <div class="flex flex-col justify-between flex-grow">
             <div>
               <h4 class="font-bold text-sm text-primary line-clamp-1">{{ item.product.name }}</h4>
-              <p class="text-primary font-bold">
-                R$ {{ item.product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}
+              <p class="text-primary font-bold text-sm">
+                <template v-if="item.product.price > 0">
+                  R$ {{ item.product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}
+                </template>
+                <template v-else>
+                  <span class="text-rose-600 font-extrabold text-xs">Sob Encomenda</span>
+                </template>
               </p>
             </div>
             <div class="flex items-center justify-between mt-2">
