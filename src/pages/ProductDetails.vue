@@ -21,9 +21,15 @@ const isRevista = computed(() => !!product.value?.name.toLowerCase().includes('r
 
 const whatsappUrl = computed(() => {
   if (!product.value) return '#';
-  if (isRevista.value || product.value.price === 0) {
+  if (isRevista.value) {
     const msg = encodeURIComponent(
       `Olá Loja da Preta! Gostaria de consultar ou fazer um pedido através da ${product.value.name}.`
+    );
+    return `https://wa.me/5555999911746?text=${msg}`;
+  }
+  if (product.value.price === 0) {
+    const msg = encodeURIComponent(
+      `Olá Loja da Preta! Gostaria de saber o valor e pedir o produto: ${product.value.name}.`
     );
     return `https://wa.me/5555999911746?text=${msg}`;
   }
@@ -87,8 +93,12 @@ function handleAddToCart() {
               R$ {{ product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}
             </p>
             <div v-else class="inline-flex flex-col">
-              <span class="text-xs font-black text-muted-foreground uppercase tracking-wider">Disponível Sob Encomenda</span>
-              <span class="text-2xl sm:text-3xl font-black text-rose-600">Catálogo Virtual Completo</span>
+              <span class="text-xs font-black text-muted-foreground uppercase tracking-wider">
+                {{ isRevista ? 'Disponível Sob Encomenda' : 'Sob Consulta' }}
+              </span>
+              <span class="text-2xl sm:text-3xl font-black text-rose-600">
+                {{ isRevista ? 'Catálogo Virtual Completo' : 'Preço sob Consulta' }}
+              </span>
             </div>
           </div>
 
@@ -146,7 +156,7 @@ function handleAddToCart() {
               rel="noopener noreferrer"
               class="flex-1 h-14 sm:h-15 bg-green-600 hover:bg-green-700 text-white text-base sm:text-lg font-extrabold rounded-2xl flex items-center justify-center gap-2.5 shadow-md transition-transform active:scale-[0.98]"
             >
-              <MessageCircle class="h-6 w-6" /> {{ isRevista ? 'Pedir Revista no WhatsApp' : 'Chamar no WhatsApp' }}
+              <MessageCircle class="h-6 w-6" /> {{ isRevista ? 'Pedir Revista no WhatsApp' : (product.price === 0 ? 'Consultar Valor no WhatsApp' : 'Chamar no WhatsApp') }}
             </a>
           </div>
         </div>

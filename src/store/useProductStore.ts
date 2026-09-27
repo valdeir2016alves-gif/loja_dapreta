@@ -15,6 +15,7 @@ const defaultCategories = [
 ];
 
 const STORAGE_KEY = 'bella-glow-products';
+const CURRENT_VERSION = 2;
 
 function prioritizeRevistas(list: Product[]): Product[] {
   const revistas = list.filter((p) => p.name.toLowerCase().includes('revista'));
@@ -27,6 +28,30 @@ function loadInitialData(): { products: Product[]; categories: string[]; deleted
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
+      const version = parsed?.version ?? 0;
+
+      // Se a versão for anterior a CURRENT_VERSION (ex: dados antigos em cache no celular),
+      // garantimos que os dados padrão atualizados da loja prevaleçam:
+      if (version < CURRENT_VERSION) {
+        const freshData = {
+          products: prioritizeRevistas(initialProducts),
+          categories: defaultCategories,
+          deletedIds: [],
+        };
+        try {
+          localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({
+              state: freshData,
+              version: CURRENT_VERSION,
+            })
+          );
+        } catch (e) {
+          console.error('Erro ao atualizar versão do localStorage', e);
+        }
+        return freshData;
+      }
+
       const savedProducts: Product[] = parsed?.state?.products || parsed?.products || [];
       const savedCategories: string[] = parsed?.state?.categories || parsed?.categories || [];
       const savedDeletedIds: string[] = parsed?.state?.deletedIds || parsed?.deletedIds || [];
@@ -88,7 +113,7 @@ export const useProductStore = defineStore('product', () => {
             categories: categories.value,
             deletedIds: deletedIds.value,
           },
-          version: 1,
+          version: CURRENT_VERSION,
         })
       );
       return true;

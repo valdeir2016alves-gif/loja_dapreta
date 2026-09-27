@@ -17,9 +17,15 @@ const isLoaded = ref(false);
 const isRevista = computed(() => props.product.name.toLowerCase().includes('revista'));
 
 const whatsappUrl = computed(() => {
-  if (isRevista.value || props.product.price === 0) {
+  if (isRevista.value) {
     const msg = encodeURIComponent(
       `Olá Loja da Preta! Gostaria de consultar ou fazer um pedido através da ${props.product.name}.`
+    );
+    return `https://wa.me/5555999911746?text=${msg}`;
+  }
+  if (props.product.price === 0) {
+    const msg = encodeURIComponent(
+      `Olá Loja da Preta! Gostaria de saber o valor e pedir o produto: ${props.product.name}.`
     );
     return `https://wa.me/5555999911746?text=${msg}`;
   }
@@ -93,9 +99,11 @@ function handleViewDetails() {
             R$ {{ product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}
           </span>
           <div v-else class="flex flex-col">
-            <span class="text-xs font-black text-muted-foreground uppercase tracking-wider">Sob Encomenda</span>
+            <span class="text-xs font-black text-muted-foreground uppercase tracking-wider">
+              {{ isRevista ? 'Revista Oficial' : 'Sob Encomenda' }}
+            </span>
             <span class="text-xl sm:text-2xl font-black text-rose-600 tracking-tight">
-              Catálogo Virtual
+              {{ isRevista ? 'Catálogo Virtual' : 'Consulte Valor' }}
             </span>
           </div>
         </div>
@@ -132,7 +140,7 @@ function handleViewDetails() {
         class="w-full h-13 rounded-2xl bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-sm transition-all"
       >
         <MessageCircle class="h-5 w-5 flex-shrink-0" />
-        <span>{{ isRevista ? 'Pedir Revista no WhatsApp' : 'Pedir pelo WhatsApp' }}</span>
+        <span>{{ isRevista ? 'Pedir Revista no WhatsApp' : (product.price === 0 ? 'Consultar Valor no WhatsApp' : 'Pedir pelo WhatsApp') }}</span>
       </a>
     </div>
   </div>
