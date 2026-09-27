@@ -22,13 +22,14 @@ function prioritizeRevistas(list: Product[]): Product[] {
   return [...revistas, ...others];
 }
 
-function loadInitialData(): { products: Product[]; categories: string[] } {
+function loadInitialData(): { products: Product[]; categories: string[]; deletedIds: string[] } {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
       const savedProducts: Product[] = parsed?.state?.products || parsed?.products || [];
       const savedCategories: string[] = parsed?.state?.categories || parsed?.categories || [];
+      const savedDeletedIds: string[] = parsed?.state?.deletedIds || parsed?.deletedIds || [];
 
       let finalProducts = initialProducts;
       if (savedProducts.length > 0) {
@@ -36,12 +37,24 @@ function loadInitialData(): { products: Product[]; categories: string[] } {
         const updatedSaved = savedProducts.map((p) => {
           const init = initialMap.get(p.id);
           if (init) {
-            return { ...p, ...init };
+            // CRÍTICO: os valores salvos pelo usuário (p) PRECISAM sobrepor os valores iniciais (init)!
+            return {
+              ...init,
+              ...p,
+              // Preenche links de catálogo/PDF padrão caso não tenham sido preenchidos
+              catalogUrl: p.catalogUrl ?? init.catalogUrl,
+              pdfUrl: p.pdfUrl ?? init.pdfUrl,
+            };
           }
           return p;
         });
+
         const savedIds = new Set(savedProducts.map((p) => p.id));
-        const missingInitial = initialProducts.filter((p) => !savedIds.has(p.id));
+        const deletedIdsSet = new Set(savedDeletedIds);
+        // Não readiciona produtos que foram intencionalmente excluídos pelo usuário
+        const missingInitial = initialProducts.filter(
+          (p) => !savedIds.has(p.id) && !deletedIdsSet.has(p.id)
+        );
         finalProducts = [...updatedSaved, ...missingInitial];
       }
 
@@ -50,20 +63,22 @@ function loadInitialData(): { products: Product[]; categories: string[] } {
       return {
         products: prioritizeRevistas(finalProducts),
         categories: finalCategories,
+        deletedIds: savedDeletedIds,
       };
     }
   } catch (err) {
     console.error('Erro ao ler localStorage de produtos:', err);
   }
-  return { products: prioritizeRevistas(initialProducts), categories: defaultCategories };
+  return { products: prioritizeRevistas(initialProducts), categories: defaultCategories, deletedIds: [] };
 }
 
 export const useProductStore = defineStore('product', () => {
   const initial = loadInitialData();
   const products = ref<Product[]>(initial.products);
   const categories = ref<string[]>(initial.categories);
+  const deletedIds = ref<string[]>(initial.deletedIds);
 
-  function persist() {
+  function persist(): boolean {
     try {
       localStorage.setItem(
         STORAGE_KEY,
@@ -71,30 +86,41 @@ export const useProductStore = defineStore('product', () => {
           state: {
             products: products.value,
             categories: categories.value,
+            deletedIds: deletedIds.value,
           },
-          version: 0,
+          version: 1,
         })
       );
+      return true;
     } catch (err) {
       console.error('Erro ao salvar produtos no localStorage:', err);
+      alert('Atenção: Não foi possível salvar no armazenamento do navegador. A memória pode estar cheia devido a fotos muito pesadas.');
+      return false;
     }
   }
 
-  watch([products, categories], persist, { deep: true });
+  watch([products, categories, deletedIds], persist, { deep: true });
 
   function addProduct(product: Product) {
+    deletedIds.value = deletedIds.value.filter((id) => id !== product.id);
     products.value.push(product);
+    persist();
   }
 
   function updateProduct(id: string, updatedProduct: Product) {
     const idx = products.value.findIndex((p) => p.id === id);
     if (idx !== -1) {
       products.value[idx] = updatedProduct;
+      persist();
     }
   }
 
   function deleteProduct(id: string) {
+    if (!deletedIds.value.includes(id)) {
+      deletedIds.value.push(id);
+    }
     products.value = products.value.filter((p) => p.id !== id);
+    persist();
   }
 
   function getProductById(id: string): Product | undefined {
@@ -104,6 +130,7 @@ export const useProductStore = defineStore('product', () => {
   function addCategory(category: string) {
     if (!categories.value.includes(category)) {
       categories.value.push(category);
+      persist();
     }
   }
 
@@ -117,6 +144,7 @@ export const useProductStore = defineStore('product', () => {
         p.category = newCategory;
       }
     });
+    persist();
   }
 
   function deleteCategory(category: string) {
@@ -126,6 +154,14 @@ export const useProductStore = defineStore('product', () => {
         p.category = "Sem Categoria";
       }
     });
+    persist();
+  }
+
+  function resetToDefault() {
+    products.value = prioritizeRevistas(initialProducts);
+    categories.value = [...defaultCategories];
+    deletedIds.value = [];
+    persist();
   }
 
   return {
@@ -138,5 +174,7 @@ export const useProductStore = defineStore('product', () => {
     addCategory,
     updateCategory,
     deleteCategory,
+    resetToDefault,
+    persist,
   };
 });

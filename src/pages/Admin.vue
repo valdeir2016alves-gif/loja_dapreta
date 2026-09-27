@@ -10,6 +10,7 @@ import {
   Upload,
   Image as ImageIcon,
   Download,
+  RotateCcw,
   X,
 } from 'lucide-vue-next';
 import { useProductStore } from '@/store/useProductStore';
@@ -35,7 +36,18 @@ const isUploading = ref(false);
 const newCategoryName = ref('');
 
 // Product Form State
-const formData = reactive<Omit<Product, 'id'>>({
+const priceInput = ref('0,00');
+const formData = reactive<{
+  name: string;
+  category: string;
+  price: number;
+  image: string;
+  shortDescription: string;
+  fullDescription: string;
+  isFeatured: boolean;
+  catalogUrl: string;
+  pdfUrl: string;
+}>({
   name: '',
   category: 'Maquiagem',
   price: 0,
@@ -43,10 +55,20 @@ const formData = reactive<Omit<Product, 'id'>>({
   shortDescription: '',
   fullDescription: '',
   isFeatured: false,
+  catalogUrl: '',
+  pdfUrl: '',
 });
 
 const products = computed(() => productStore.products);
 const categories = computed(() => productStore.categories);
+
+function parsePrice(val: string | number): number {
+  if (typeof val === 'number') return isNaN(val) ? 0 : Math.max(0, val);
+  if (!val) return 0;
+  const clean = String(val).replace(/[^\d.,]/g, '').replace(',', '.');
+  const parsed = parseFloat(clean);
+  return isNaN(parsed) ? 0 : Math.max(0, parsed);
+}
 
 function handleLogin(e: Event) {
   e.preventDefault();
@@ -69,10 +91,13 @@ function handleOpenAdd() {
   formData.name = '';
   formData.category = categories.value[0] || 'Sem Categoria';
   formData.price = 0;
+  priceInput.value = '0,00';
   formData.image = '';
   formData.shortDescription = '';
   formData.fullDescription = '';
   formData.isFeatured = false;
+  formData.catalogUrl = '';
+  formData.pdfUrl = '';
   isDialogOpen.value = true;
 }
 
@@ -81,10 +106,13 @@ function handleOpenEdit(product: Product) {
   formData.name = product.name;
   formData.category = product.category;
   formData.price = product.price;
+  priceInput.value = product.price > 0 ? product.price.toFixed(2).replace('.', ',') : '0,00';
   formData.image = product.image;
   formData.shortDescription = product.shortDescription;
   formData.fullDescription = product.fullDescription;
   formData.isFeatured = product.isFeatured || false;
+  formData.catalogUrl = product.catalogUrl || '';
+  formData.pdfUrl = product.pdfUrl || '';
   isDialogOpen.value = true;
 }
 
@@ -111,30 +139,55 @@ async function handleFileUpload(e: Event) {
 }
 
 function handleSubmit() {
+  if (!formData.name.trim()) {
+    alert('Por favor, informe o nome do produto.');
+    return;
+  }
+
   if (!formData.image.trim()) {
     alert('Por favor, adicione uma foto para o produto (escolhendo do dispositivo ou inserindo o link).');
     return;
   }
 
+  const finalPrice = parsePrice(priceInput.value);
+
+  const productData: Product = {
+    id: editingProductId.value || Math.random().toString(36).substring(2, 11),
+    name: formData.name.trim(),
+    category: formData.category,
+    price: finalPrice,
+    image: formData.image.trim(),
+    shortDescription: formData.shortDescription.trim(),
+    fullDescription: formData.fullDescription.trim(),
+    isFeatured: formData.isFeatured || false,
+    catalogUrl: formData.catalogUrl?.trim() || undefined,
+    pdfUrl: formData.pdfUrl?.trim() || undefined,
+  };
+
   if (editingProductId.value) {
-    productStore.updateProduct(editingProductId.value, {
-      ...formData,
-      id: editingProductId.value,
-    });
+    productStore.updateProduct(editingProductId.value, productData);
   } else {
-    const newProduct: Product = {
-      ...formData,
-      id: Math.random().toString(36).substring(2, 11),
-    };
-    productStore.addProduct(newProduct);
+    productStore.addProduct(productData);
   }
 
   isDialogOpen.value = false;
+  alert('Produto salvo com sucesso! As alterações já estão ativas na loja.');
 }
 
 function handleDeleteProduct(id: string, name: string) {
   if (confirm(`Deseja realmente excluir o produto "${name}"?`)) {
     productStore.deleteProduct(id);
+  }
+}
+
+function handleResetDefault() {
+  if (
+    confirm(
+      'Deseja restaurar todos os produtos e categorias para a versão padrão de fábrica? Todas as suas alterações manuais serão resetadas.'
+    )
+  ) {
+    productStore.resetToDefault();
+    alert('Catálogo restaurado para o padrão inicial!');
   }
 }
 
@@ -266,6 +319,16 @@ function handleImportBackup(e: Event) {
               @change="handleImportBackup"
             />
           </label>
+
+          <!-- Restaurar Padrão Inicial -->
+          <button
+            type="button"
+            @click="handleResetDefault"
+            class="rounded-xl h-12 px-4 border border-rose-200 hover:bg-rose-50 text-rose-700 font-semibold text-sm transition-colors flex items-center gap-2"
+            title="Restaurar lista de produtos padrão de fábrica"
+          >
+            <RotateCcw class="h-4 w-4" /> Restaurar Padrão
+          </button>
 
           <!-- Novo Produto -->
           <button
@@ -460,15 +523,21 @@ function handleImportBackup(e: Event) {
 
           <!-- Preço -->
           <div class="space-y-2 md:col-span-2">
-            <label class="text-xs font-semibold text-muted-foreground">Preço (R$) *</label>
-            <input
-              v-model.number="formData.price"
-              type="number"
-              step="0.01"
-              required
-              class="w-full px-4 py-3 rounded-xl border border-primary/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-              placeholder="0,00"
-            />
+            <label class="text-xs font-bold text-gray-700">Preço do Produto (R$) *</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-extrabold text-primary">R$</span>
+              <input
+                v-model="priceInput"
+                type="text"
+                inputmode="decimal"
+                required
+                class="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-primary/20 text-base font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white"
+                placeholder="0,00"
+              />
+            </div>
+            <p class="text-[11px] text-gray-500 font-medium">
+              Digite o valor (ex: 45,00 ou 22.90). Para revistas ou itens sob encomenda, digite 0.
+            </p>
           </div>
 
           <!-- Foto do Produto (Upload direto + Preview) -->
@@ -557,6 +626,33 @@ function handleImportBackup(e: Event) {
               class="w-full px-4 py-3 rounded-xl border border-primary/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
               placeholder="Informações detalhadas sobre o produto, modo de uso, benefícios..."
             />
+          </div>
+
+          <!-- Links de Revista / Catálogo Virtual (Opcional) -->
+          <div class="space-y-3 md:col-span-2 p-4 bg-rose-50/60 rounded-2xl border border-rose-200">
+            <label class="text-xs font-bold text-rose-800 uppercase tracking-wide block">
+              Links do Catálogo Virtual / Revista (Opcional)
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-[11px] font-semibold text-gray-700">Link para Folhear Online (URL)</label>
+                <input
+                  v-model="formData.catalogUrl"
+                  type="url"
+                  placeholder="https://avonfolheto.com/..."
+                  class="w-full px-3 py-2 rounded-xl border border-primary/20 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 bg-white"
+                />
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold text-gray-700">Link do Arquivo PDF (URL)</label>
+                <input
+                  v-model="formData.pdfUrl"
+                  type="url"
+                  placeholder="https://.../revista.pdf"
+                  class="w-full px-3 py-2 rounded-xl border border-primary/20 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 bg-white"
+                />
+              </div>
+            </div>
           </div>
 
           <!-- Modal Footer -->
