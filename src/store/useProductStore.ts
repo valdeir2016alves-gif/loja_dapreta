@@ -1,7 +1,17 @@
 import { defineStore } from 'pinia';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import type { Product } from '@/types/product';
 import { initialProducts } from '@/data/initialData';
+import { db } from '@/lib/firebase';
+import {
+  collection,
+  doc,
+  onSnapshot,
+  setDoc,
+  deleteDoc,
+  writeBatch,
+  getDocs,
+} from 'firebase/firestore';
 
 const defaultCategories = [
   "Revistas Avon",
@@ -23,35 +33,21 @@ function prioritizeRevistas(list: Product[]): Product[] {
   return [...revistas, ...others];
 }
 
+function cleanForFirestore<T extends Record<string, any>>(obj: T): Record<string, any> {
+  const clean: Record<string, any> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) {
+      clean[key] = value;
+    }
+  }
+  return clean;
+}
+
 function loadInitialData(): { products: Product[]; categories: string[]; deletedIds: string[] } {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      const version = parsed?.version ?? 0;
-
-      // Se a versão for anterior a CURRENT_VERSION (ex: dados antigos em cache no celular),
-      // garantimos que os dados padrão atualizados da loja prevaleçam:
-      if (version < CURRENT_VERSION) {
-        const freshData = {
-          products: prioritizeRevistas(initialProducts),
-          categories: defaultCategories,
-          deletedIds: [],
-        };
-        try {
-          localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify({
-              state: freshData,
-              version: CURRENT_VERSION,
-            })
-          );
-        } catch (e) {
-          console.error('Erro ao atualizar versão do localStorage', e);
-        }
-        return freshData;
-      }
-
       const savedProducts: Product[] = parsed?.state?.products || parsed?.products || [];
       const savedCategories: string[] = parsed?.state?.categories || parsed?.categories || [];
       const savedDeletedIds: string[] = parsed?.state?.deletedIds || parsed?.deletedIds || [];
@@ -62,11 +58,9 @@ function loadInitialData(): { products: Product[]; categories: string[]; deleted
         const updatedSaved = savedProducts.map((p) => {
           const init = initialMap.get(p.id);
           if (init) {
-            // CRÍTICO: os valores salvos pelo usuário (p) PRECISAM sobrepor os valores iniciais (init)!
             return {
               ...init,
               ...p,
-              // Preenche links de catálogo/PDF padrão caso não tenham sido preenchidos
               catalogUrl: p.catalogUrl ?? init.catalogUrl,
               pdfUrl: p.pdfUrl ?? init.pdfUrl,
             };
@@ -76,7 +70,6 @@ function loadInitialData(): { products: Product[]; categories: string[]; deleted
 
         const savedIds = new Set(savedProducts.map((p) => p.id));
         const deletedIdsSet = new Set(savedDeletedIds);
-        // Não readiciona produtos que foram intencionalmente excluídos pelo usuário
         const missingInitial = initialProducts.filter(
           (p) => !savedIds.has(p.id) && !deletedIdsSet.has(p.id)
         );
@@ -102,8 +95,10 @@ export const useProductStore = defineStore('product', () => {
   const products = ref<Product[]>(initial.products);
   const categories = ref<string[]>(initial.categories);
   const deletedIds = ref<string[]>(initial.deletedIds);
+  const isCloudConnected = ref<boolean>(false);
+  const cloudError = ref<string | null>(null);
 
-  function persist(): boolean {
+  function persistLocal(): boolean {
     try {
       localStorage.setItem(
         STORAGE_KEY,
@@ -119,47 +114,153 @@ export const useProductStore = defineStore('product', () => {
       return true;
     } catch (err) {
       console.error('Erro ao salvar produtos no localStorage:', err);
-      alert('Atenção: Não foi possível salvar no armazenamento do navegador. A memória pode estar cheia devido a fotos muito pesadas.');
       return false;
     }
   }
 
-  watch([products, categories, deletedIds], persist, { deep: true });
+  // --- SINCRONIZAÇÃO EM TEMPO REAL COM FIREBASE FIRESTORE ---
+  try {
+    const productsCol = collection(db, 'products');
 
-  function addProduct(product: Product) {
-    deletedIds.value = deletedIds.value.filter((id) => id !== product.id);
-    products.value.push(product);
-    persist();
+    onSnapshot(
+      productsCol,
+      async (snapshot) => {
+        isCloudConnected.value = true;
+        cloudError.value = null;
+
+        // Se o banco na nuvem ainda estiver vazio, inicializa com o catálogo inicial
+        if (snapshot.empty) {
+          console.log('Firebase vazio. Enviando catálogo padrão para a nuvem...');
+          try {
+            const batch = writeBatch(db);
+            for (const prod of products.value) {
+              const docRef = doc(db, 'products', prod.id);
+              batch.set(docRef, cleanForFirestore(prod));
+            }
+            await batch.commit();
+            console.log('Catálogo inicial salvo no Firebase com sucesso!');
+          } catch (e: any) {
+            console.error('Erro ao popular catálogo inicial no Firebase:', e);
+            cloudError.value = e?.message || 'Erro ao sincronizar inicial';
+          }
+        } else {
+          // Carrega produtos da nuvem em tempo real
+          const remoteProducts: Product[] = [];
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data() as Product;
+            remoteProducts.push({
+              ...data,
+              id: docSnap.id,
+            });
+          });
+          products.value = prioritizeRevistas(remoteProducts);
+          persistLocal();
+        }
+      },
+      (error) => {
+        console.error('Erro no listener do Firebase Firestore:', error);
+        cloudError.value = error.message;
+      }
+    );
+
+    // Listener para categorias
+    const catDocRef = doc(db, 'config', 'categories');
+    onSnapshot(
+      catDocRef,
+      async (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (Array.isArray(data?.list) && data.list.length > 0) {
+            categories.value = data.list;
+            persistLocal();
+          }
+        } else {
+          try {
+            await setDoc(catDocRef, { list: defaultCategories });
+          } catch (e) {
+            console.error('Erro ao salvar categorias iniciais no Firebase:', e);
+          }
+        }
+      },
+      (error) => {
+        console.error('Erro no listener de categorias do Firebase:', error);
+      }
+    );
+  } catch (err: any) {
+    console.error('Erro ao inicializar Firebase Firestore:', err);
+    cloudError.value = err?.message || 'Falha ao conectar ao Firebase';
   }
 
-  function updateProduct(id: string, updatedProduct: Product) {
-    const idx = products.value.findIndex((p) => p.id === id);
-    if (idx !== -1) {
-      products.value[idx] = updatedProduct;
-      persist();
+  // --- AÇÕES DO CATÁLOGO COM SINCRONIZAÇÃO EM NUVEM ---
+
+  async function addProduct(product: Product) {
+    deletedIds.value = deletedIds.value.filter((id) => id !== product.id);
+    const existingIndex = products.value.findIndex((p) => p.id === product.id);
+    if (existingIndex !== -1) {
+      products.value[existingIndex] = product;
+    } else {
+      products.value.push(product);
+    }
+    persistLocal();
+
+    try {
+      await setDoc(doc(db, 'products', product.id), cleanForFirestore(product));
+      return true;
+    } catch (err) {
+      console.error('Erro ao enviar produto para o Firebase:', err);
+      return false;
     }
   }
 
-  function deleteProduct(id: string) {
+  async function updateProduct(id: string, updatedProduct: Product) {
+    const idx = products.value.findIndex((p) => p.id === id);
+    if (idx !== -1) {
+      products.value[idx] = updatedProduct;
+      persistLocal();
+    }
+
+    try {
+      await setDoc(doc(db, 'products', id), cleanForFirestore(updatedProduct));
+      return true;
+    } catch (err) {
+      console.error('Erro ao atualizar produto no Firebase:', err);
+      return false;
+    }
+  }
+
+  async function deleteProduct(id: string) {
     if (!deletedIds.value.includes(id)) {
       deletedIds.value.push(id);
     }
     products.value = products.value.filter((p) => p.id !== id);
-    persist();
+    persistLocal();
+
+    try {
+      await deleteDoc(doc(db, 'products', id));
+      return true;
+    } catch (err) {
+      console.error('Erro ao excluir produto no Firebase:', err);
+      return false;
+    }
   }
 
   function getProductById(id: string): Product | undefined {
     return products.value.find((p) => p.id === id);
   }
 
-  function addCategory(category: string) {
+  async function addCategory(category: string) {
     if (!categories.value.includes(category)) {
       categories.value.push(category);
-      persist();
+      persistLocal();
+      try {
+        await setDoc(doc(db, 'config', 'categories'), { list: categories.value });
+      } catch (err) {
+        console.error('Erro ao adicionar categoria no Firebase:', err);
+      }
     }
   }
 
-  function updateCategory(oldCategory: string, newCategory: string) {
+  async function updateCategory(oldCategory: string, newCategory: string) {
     const idx = categories.value.indexOf(oldCategory);
     if (idx !== -1) {
       categories.value[idx] = newCategory;
@@ -167,31 +268,75 @@ export const useProductStore = defineStore('product', () => {
     products.value.forEach((p) => {
       if (p.category === oldCategory) {
         p.category = newCategory;
+        updateProduct(p.id, p);
       }
     });
-    persist();
+    persistLocal();
+    try {
+      await setDoc(doc(db, 'config', 'categories'), { list: categories.value });
+    } catch (err) {
+      console.error('Erro ao atualizar categoria no Firebase:', err);
+    }
   }
 
-  function deleteCategory(category: string) {
+  async function deleteCategory(category: string) {
     categories.value = categories.value.filter((c) => c !== category);
     products.value.forEach((p) => {
       if (p.category === category) {
         p.category = "Sem Categoria";
+        updateProduct(p.id, p);
       }
     });
-    persist();
+    persistLocal();
+    try {
+      await setDoc(doc(db, 'config', 'categories'), { list: categories.value });
+    } catch (err) {
+      console.error('Erro ao remover categoria no Firebase:', err);
+    }
   }
 
-  function resetToDefault() {
+  async function resetToDefault() {
     products.value = prioritizeRevistas(initialProducts);
     categories.value = [...defaultCategories];
     deletedIds.value = [];
-    persist();
+    persistLocal();
+
+    try {
+      // Limpa coleção existente e insere inicial
+      const currentDocs = await getDocs(collection(db, 'products'));
+      const batch = writeBatch(db);
+      currentDocs.forEach((d) => batch.delete(d.ref));
+      for (const prod of initialProducts) {
+        batch.set(doc(db, 'products', prod.id), cleanForFirestore(prod));
+      }
+      batch.set(doc(db, 'config', 'categories'), { list: defaultCategories });
+      await batch.commit();
+      console.log('Firebase resetado com sucesso!');
+    } catch (err) {
+      console.error('Erro ao resetar Firebase:', err);
+    }
+  }
+
+  async function syncAllToCloud() {
+    try {
+      const batch = writeBatch(db);
+      for (const prod of products.value) {
+        batch.set(doc(db, 'products', prod.id), cleanForFirestore(prod));
+      }
+      batch.set(doc(db, 'config', 'categories'), { list: categories.value });
+      await batch.commit();
+      return true;
+    } catch (err) {
+      console.error('Erro ao sincronizar tudo para a nuvem:', err);
+      return false;
+    }
   }
 
   return {
     products,
     categories,
+    isCloudConnected,
+    cloudError,
     addProduct,
     updateProduct,
     deleteProduct,
@@ -200,6 +345,7 @@ export const useProductStore = defineStore('product', () => {
     updateCategory,
     deleteCategory,
     resetToDefault,
-    persist,
+    syncAllToCloud,
+    persist: persistLocal,
   };
 });

@@ -12,6 +12,9 @@ import {
   Download,
   RotateCcw,
   X,
+  Cloud,
+  CloudOff,
+  RefreshCw,
 } from 'lucide-vue-next';
 import { useProductStore } from '@/store/useProductStore';
 import { compressImage } from '@/lib/imageUtils';
@@ -138,7 +141,7 @@ async function handleFileUpload(e: Event) {
   }
 }
 
-function handleSubmit() {
+async function handleSubmit() {
   if (!formData.name.trim()) {
     alert('Por favor, informe o nome do produto.');
     return;
@@ -165,29 +168,29 @@ function handleSubmit() {
   };
 
   if (editingProductId.value) {
-    productStore.updateProduct(editingProductId.value, productData);
+    await productStore.updateProduct(editingProductId.value, productData);
   } else {
-    productStore.addProduct(productData);
+    await productStore.addProduct(productData);
   }
 
   isDialogOpen.value = false;
-  alert('Produto salvo com sucesso! As alterações já estão ativas na loja.');
+  alert('Produto salvo com sucesso! As alterações estão ativas na loja e sincronizadas com a nuvem.');
 }
 
-function handleDeleteProduct(id: string, name: string) {
+async function handleDeleteProduct(id: string, name: string) {
   if (confirm(`Deseja realmente excluir o produto "${name}"?`)) {
-    productStore.deleteProduct(id);
+    await productStore.deleteProduct(id);
   }
 }
 
-function handleResetDefault() {
+async function handleResetDefault() {
   if (
     confirm(
-      'Deseja restaurar todos os produtos e categorias para a versão padrão de fábrica? Todas as suas alterações manuais serão resetadas.'
+      'Deseja restaurar todos os produtos e categorias para a versão padrão de fábrica? Todas as suas alterações manuais serão resetadas na nuvem e em todos os aparelhos.'
     )
   ) {
-    productStore.resetToDefault();
-    alert('Catálogo restaurado para o padrão inicial!');
+    await productStore.resetToDefault();
+    alert('Catálogo restaurado para o padrão inicial em todos os dispositivos!');
   }
 }
 
@@ -202,6 +205,21 @@ function handleAddCategory() {
 function handleDeleteCategory(cat: string) {
   if (confirm(`Deseja excluir a categoria "${cat}"? Os produtos associados ficarão como "Sem Categoria".`)) {
     productStore.deleteCategory(cat);
+  }
+}
+
+const isManualSyncing = ref(false);
+async function handleForceSyncCloud() {
+  try {
+    isManualSyncing.value = true;
+    const ok = await productStore.syncAllToCloud();
+    if (ok) {
+      alert('Todos os produtos e categorias foram sincronizados com sucesso na nuvem!');
+    } else {
+      alert('Não foi possível sincronizar na nuvem. Verifique sua conexão.');
+    }
+  } finally {
+    isManualSyncing.value = false;
   }
 }
 
@@ -226,14 +244,15 @@ function handleImportBackup(e: Event) {
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = (event) => {
+  reader.onload = async (event) => {
     try {
       const content = event.target?.result as string;
       const parsed = JSON.parse(content);
       if (parsed && (parsed.state || parsed.products)) {
         const dataToSave = parsed.state ? content : JSON.stringify({ state: parsed, version: 0 });
         localStorage.setItem('bella-glow-products', dataToSave);
-        alert('Produtos e categorias importados com sucesso! A página será recarregada.');
+        await productStore.syncAllToCloud();
+        alert('Produtos e categorias importados e sincronizados com a nuvem com sucesso! A página será recarregada.');
         window.location.reload();
       } else {
         alert('Arquivo de catálogo inválido.');
@@ -297,6 +316,17 @@ function handleImportBackup(e: Event) {
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
+          <!-- Sincronizar Nuvem -->
+          <button
+            type="button"
+            @click="handleForceSyncCloud"
+            :disabled="isManualSyncing"
+            class="rounded-xl h-12 px-4 border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold text-sm transition-colors flex items-center gap-2"
+            title="Enviar produtos atuais para a nuvem imediatamente"
+          >
+            <RefreshCw class="h-4 w-4" :class="{ 'animate-spin': isManualSyncing }" /> Sincronizar Nuvem
+          </button>
+
           <!-- Exportar Dados -->
           <button
             type="button"
@@ -347,6 +377,38 @@ function handleImportBackup(e: Event) {
           >
             Sair
           </button>
+        </div>
+      </div>
+
+      <!-- Cloud Status Banner -->
+      <div
+        v-if="productStore.isCloudConnected"
+        class="mb-8 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-3 text-emerald-900 text-sm shadow-sm"
+      >
+        <Cloud class="h-5 w-5 text-emerald-600 flex-shrink-0" />
+        <div>
+          <span class="font-bold">Nuvem Conectada e Sincronizada:</span> Qualquer preço ou produto alterado aqui atualizará automaticamente no celular, no computador e para todos os clientes em tempo real.
+        </div>
+      </div>
+
+      <div
+        v-else-if="productStore.cloudError"
+        class="mb-8 p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-3 text-rose-900 text-sm shadow-sm"
+      >
+        <CloudOff class="h-5 w-5 text-rose-600 flex-shrink-0 mt-0.5" />
+        <div>
+          <span class="font-bold">Aviso de sincronização com o Firebase:</span> {{ productStore.cloudError }}
+          <p class="mt-1 text-xs text-rose-700">Dica: No Firebase Console, vá em "Firestore Database > Regras" e certifique-se de que o modo de teste está ativo permitindo leitura e escrita.</p>
+        </div>
+      </div>
+
+      <div
+        v-else
+        class="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-3 text-amber-900 text-sm shadow-sm"
+      >
+        <RefreshCw class="h-5 w-5 text-amber-600 animate-spin flex-shrink-0" />
+        <div>
+          <span class="font-bold">Conectando ao Firebase...</span> Sincronizando catálogo com a nuvem.
         </div>
       </div>
 
